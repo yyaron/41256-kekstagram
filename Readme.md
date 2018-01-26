@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Iaroslav Rudenko](https://up.htmlacademy.ru/javascript/12/user/41256).
-* Наставник: `Неизвестно`.
+* Наставник: `Андрей Дос`.
 
 ---
 
