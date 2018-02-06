@@ -13,16 +13,14 @@ var COMMENTS = [
 
 //  получаем случайное число от 15 до 200. на всякий случай мин. и макс. количество лайков записаны в константы
 var getRandomLikeNumber = function () {
-  LIKES_MAX += 1;
-  var randomLikeNumber = Math.floor(Math.random() * (LIKES_MAX - LIKES_MIN) + LIKES_MIN);
-  return randomLikeNumber;
+  return Math.floor(Math.random() * (LIKES_MAX - LIKES_MIN) + LIKES_MIN);
 };
 
 //  получаем случайное количество комментариев. минимальное и максимальное значение привязаны к величине массива COMMENTS.
 //  в перспективе можно использовать эту функцию для получения случайного комментария.
 var getCommentsNumber = function (arr) {
   var max = arr.length;
-  var commentsNumber = Math.round(Math.random() * (max - 1));
+  var commentsNumber = Math.round(Math.random() * max);
   return commentsNumber;
 };
 
@@ -31,10 +29,10 @@ var getFriendPictures = function () {
   //  массив, в котором содержатся объекты, описывающие параметры фотографий
   var friendPictures = [];
   //  цикл, который добавляет в массив необходимое количество объектов
-  for (var i = 1; i <= 26; i++) {
-    friendPictures[i - 1] =
+  for (var i = 0; i < 26; i++) {
+    friendPictures[i] =
     {
-      url: 'photos/' + [i] + '.jpg',
+      url: 'photos/' + [i + 1] + '.jpg',
       likes: getRandomLikeNumber(),
       comments: getCommentsNumber(COMMENTS),
     };
@@ -43,12 +41,12 @@ var getFriendPictures = function () {
 };
 var friendPictures = getFriendPictures();
 
-//  сохраняем в переменную шаблон
-var pictureTemplate = document.querySelector('#picture-template').content;
 //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
 var pictureList = document.querySelector('.pictures');
 
 var renderImage = function (picture) {
+  //  сохраняем в переменную шаблон
+  var pictureTemplate = document.querySelector('#picture-template').content;
   //  копируем всё содержимое шаблона в новый элемент
   var pictureElement = pictureTemplate.cloneNode(true);
   //  вставляем мгенерированную картинку из массива
