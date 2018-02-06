@@ -18,11 +18,12 @@ var getRandomLikeNumber = function () {
   return randomLikeNumber;
 };
 
-//  получаем случайный комментарий. функция учитывает длину массива и может генерировать любое нужное число
-var getRandomComment = function (arr) {
+//  получаем случайное количество комментариев. минимальное и максимальное значение привязаны к величине массива COMMENTS.
+//  в перспективе можно использовать эту функцию для получения случайного комментария.
+var getCommentsNumber = function (arr) {
   var max = arr.length;
-  var randomComment = Math.round(Math.random() * (max - 1));
-  return randomComment;
+  var commentsNumber = Math.round(Math.random() * (max - 1));
+  return commentsNumber;
 };
 
 //  функция, которая генерирует массив с объектами. внутри объектов содержатся случайные значения
@@ -35,7 +36,7 @@ var getFriendPictures = function () {
     {
       url: 'photos/' + [i] + '.jpg',
       likes: getRandomLikeNumber(),
-      //  comments: COMMENTS[getRandomComment(COMMENTS)],
+      comments: getCommentsNumber(COMMENTS),
     };
   }
   return friendPictures;
@@ -47,21 +48,28 @@ var pictureTemplate = document.querySelector('#picture-template').content;
 //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
 var pictureList = document.querySelector('.pictures');
 
-for (var j = 0; j <= 25; j++) {
+var renderImage = function (picture) {
   //  копируем всё содержимое шаблона в новый элемент
   var pictureElement = pictureTemplate.cloneNode(true);
-
   //  вставляем мгенерированную картинку из массива
-  var picture = pictureElement.querySelector('img');
-  picture.src = friendPictures[j].url;
-
+  pictureElement.querySelector('img').src = picture.url;
   //  вставляем рандомное число лайков из массива
-  var like = pictureElement.querySelector('span');
-  like.textContent = friendPictures[j].likes;
+  pictureElement.querySelector('.picture-likes').textContent = picture.likes;
+  //  вставляем рандомное число комментариев из массива
+  pictureElement.querySelector('.picture-comments').textContent = picture.comments;
 
-  pictureList.appendChild(pictureElement);
+  return pictureElement;
+};
+
+//  создаем фрагмент
+var fragment = document.createDocumentFragment();
+
+//  и воспроизводим шаблоны с помощью фрагмента
+for (var j = 0; j < friendPictures.length; j++) {
+  fragment.appendChild(renderImage(friendPictures[j]));
 }
+pictureList.appendChild(fragment);
 
 //  делаем видимым окно галереи
-//  var gallery = document.querySelector('.gallery-overlay');
-//  gallery.classList.remove('hidden');
+var gallery = document.querySelector('.gallery-overlay');
+gallery.classList.remove('hidden');
