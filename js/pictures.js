@@ -13,14 +13,13 @@ var COMMENTS = [
 
 //  получаем случайное число от 15 до 200. на всякий случай мин. и макс. количество лайков записаны в константы
 var getRandomLikeNumber = function () {
-  return Math.floor(Math.random() * (LIKES_MAX - LIKES_MIN) + LIKES_MIN);
+  return Math.floor(Math.random() * (LIKES_MAX + 1 - LIKES_MIN) + LIKES_MIN);
 };
 
 //  получаем случайное количество комментариев. минимальное и максимальное значение привязаны к величине массива COMMENTS.
 //  в перспективе можно использовать эту функцию для получения случайного комментария.
 var getCommentsNumber = function (arr) {
-  var max = arr.length;
-  var commentsNumber = Math.round(Math.random() * max);
+  var commentsNumber = Math.round(Math.random() * arr.length);
   return commentsNumber;
 };
 
@@ -71,3 +70,8 @@ pictureList.appendChild(fragment);
 //  делаем видимым окно галереи
 var gallery = document.querySelector('.gallery-overlay');
 gallery.classList.remove('hidden');
+
+//  заполняем окно данными с первой фотографии
+gallery.querySelector('.gallery-overlay-image').src = friendPictures[0].url;
+gallery.querySelector('.likes-count').textContent = friendPictures[0].likes;
+gallery.querySelector('.comments-count').textContent = friendPictures[0].comments;
