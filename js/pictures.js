@@ -194,4 +194,5 @@ sliderPin.addEventListener('mouseup', function (evt) {
   //  определяем пропорцию эффекта относительно положения ползунка
   var proportion = (pinPositionOnSlider / sliderWidth).toFixed(2);
   //  console.log(proportion);
+  proportion += 0;
 });
