@@ -180,6 +180,7 @@ increaseButton.addEventListener('click', onIncreaseButtonClick);
 //  обработчик нажатия на кнопку увеличения
 decreaseButton.addEventListener('click', onDecreaseButtonClick);
 
+/*
 //  ползунок слайдера
 var sliderPin = document.querySelector('.upload-effect-level-pin');
 
@@ -196,3 +197,4 @@ sliderPin.addEventListener('mouseup', function (evt) {
   //  console.log(proportion);
   proportion += 0;
 });
+*/
