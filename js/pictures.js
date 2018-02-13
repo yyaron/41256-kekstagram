@@ -115,7 +115,7 @@ uploadForm.addEventListener('change', function () {
 
 //  окно галереи, кнопка закрытия окна
 var gallery = document.querySelector('.gallery-overlay');
-var galleryClose = gallery.querySelector('.gallery-overlay-close')
+var galleryClose = gallery.querySelector('.gallery-overlay-close');
 
 //  открываем окно по клику на фотографию
 document.addEventListener('click', function (evt) {
@@ -138,13 +138,13 @@ document.addEventListener('click', function (evt) {
     gallery.classList.add('hidden');
   });
   //  закрываем по клику на Enter, если крестик в фокусе
-  galleryClose.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 13) {
-        gallery.classList.add('hidden');
-      }
-    });
+  galleryClose.addEventListener('keydown', function () {
+    if (evt.keyCode === 13) {
+      gallery.classList.add('hidden');
+    }
+  });
   //  закрываем по клику на Escape
-  document.addEventListener('keydown', function (evt) {
+  document.addEventListener('keydown', function () {
     if (evt.keyCode === 27) {
       gallery.classList.add('hidden');
     }
@@ -159,8 +159,8 @@ var imagePreview = document.querySelector('.effect-image-preview');
 
 //  функция увеличения масштаба фото
 var onIncreaseButtonClick = function () {
-  if ((parseInt(sizeValue.value)) < 100) {
-    sizeValue.value = (parseInt(sizeValue.value)) + 25;
+  if (parseInt(sizeValue.value, 10) < 100) {
+    sizeValue.value = parseInt(sizeValue.value, 10) + 25;
     imagePreview.style.transform = 'scale(' + (sizeValue.value / 100) + ')';
     sizeValue.value += '%';
   }
@@ -168,8 +168,8 @@ var onIncreaseButtonClick = function () {
 
 //  функция уменьшения масштаба фото
 var onDecreaseButtonClick = function () {
-  if ((parseInt(sizeValue.value)) > 25) {
-    sizeValue.value = (parseInt(sizeValue.value)) - 25;
+  if (parseInt(sizeValue.value, 10) > 25) {
+    sizeValue.value = parseInt(sizeValue.value, 10) - 25;
     imagePreview.style.transform = 'scale(' + (sizeValue.value / 100) + ')';
     sizeValue.value += '%';
   }
@@ -193,6 +193,5 @@ sliderPin.addEventListener('mouseup', function (evt) {
   var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
   //  определяем пропорцию эффекта относительно положения ползунка
   var proportion = (pinPositionOnSlider / sliderWidth).toFixed(2);
-
-  console.log(proportion);
+  //  console.log(proportion);
 });
