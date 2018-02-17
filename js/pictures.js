@@ -1,5 +1,8 @@
 'use strict';
 
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+
 var LIKES_MIN = 15;
 var LIKES_MAX = 200;
 var COMMENTS = [
@@ -76,80 +79,103 @@ var uploadForm = document.querySelector('#upload-file');
 var uploadOverlay = document.querySelector('.upload-overlay');
 var uploadFormClose = document.querySelector('.upload-form-cancel');
 
-//  var uploadOverlayOpen = function () {
-//    uploadOverlay.classList.remove('hidden');
-//  };
+//  функция закрытия окна превью по нажатии на Escape
+var onOverlayCloseEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    onUploadOverlayCloseClick();
+  }
+};
 
-//  var uploadOverlayClose = function () {
-//    uploadOverlay.classList.add('hidden');
-//  uploadForm.value = '';
-//  };
+//  функция закрытия окна превью по нажатии на Enter
+var onOverlayCloseEnterPress = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    onUploadOverlayCloseClick();
+  }
+};
 
-//  показываем окно превью по изменению значения
-uploadForm.addEventListener('change', function () {
+//  функция открытия окна превью
+var onUploadFormChange = function () {
   uploadOverlay.classList.remove('hidden');
 
   //  закрываем по клику
-  uploadFormClose.addEventListener('click', function () {
-    uploadOverlay.classList.add('hidden');
-    uploadForm.value = '';
-  });
-
+  uploadFormClose.addEventListener('click', onUploadOverlayCloseClick);
   //  закрываем по нажатии на Escape
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === 27) {
-      uploadOverlay.classList.add('hidden');
-      uploadForm.value = '';
-    }
-  });
-
+  document.addEventListener('keydown', onOverlayCloseEscPress);
   //  закрываем по нажатии на Enter, если крестик в фокусе
-  uploadFormClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === 13) {
-      uploadOverlay.classList.add('hidden');
-      uploadForm.value = '';
-    }
-  });
-});
+  uploadFormClose.addEventListener('keydown', onOverlayCloseEnterPress);
+};
 
+//  закрытие окна превью
+var onUploadOverlayCloseClick = function () {
+  uploadOverlay.classList.add('hidden');
+  uploadForm.value = '';
+
+  //  удаляем обработчики по закрытию окна
+  uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
+  document.removeEventListener('keydown', onOverlayCloseEscPress);
+  uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
+};
+
+//  показываем окно превью по изменению значения
+uploadForm.addEventListener('change', onUploadFormChange);
 
 //  окно галереи, кнопка закрытия окна
 var gallery = document.querySelector('.gallery-overlay');
-var galleryClose = gallery.querySelector('.gallery-overlay-close');
+var galleryCloseIcon = gallery.querySelector('.gallery-overlay-close');
 
-//  открываем окно по клику на фотографию
-document.addEventListener('click', function (evt) {
-  if (evt.target.tagName === 'IMG') {
-    evt.preventDefault();
-    var clickedItem = evt.target;
-    var itemStats = clickedItem.nextElementSibling.children;
-
-    //  делаем видимым окно галереи
-    gallery.classList.remove('hidden');
-
-    //  заполняем окно данными с выбранной фотографии
-    gallery.querySelector('.gallery-overlay-image').src = clickedItem.src;
-    gallery.querySelector('.likes-count').textContent = itemStats[0].textContent;
-    gallery.querySelector('.comments-count').textContent = itemStats[1].textContent;
+//  закрытие окна галереи по нажатии на Enter
+var onGalleryCloseEnterPress = function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    onGalleryCloseClick();
   }
+};
+
+//  закрытие окна галереи по нажатии на Escape
+var onGalleryCloseEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    onGalleryCloseClick();
+  }
+};
+
+//  закрытие окна галереи и удаление ненужный обработчиков
+var onGalleryCloseClick = function () {
+  gallery.classList.add('hidden');
+
+  galleryCloseIcon.removeEventListener('click', onGalleryCloseClick);
+  galleryCloseIcon.removeEventListener('keydown', onGalleryCloseEnterPress);
+  document.removeEventListener('keydown', onGalleryCloseEscPress);
+};
+
+//  показ окна галереи
+var onAnyPictureClick = function (evt) {
+  evt.preventDefault();
+  var clickedItem = evt.target;
+  var itemStats = clickedItem.nextElementSibling.children;
+
+  //  делаем видимым окно галереи
+  gallery.classList.remove('hidden');
+
+  //  заполняем окно данными с выбранной фотографии
+  gallery.querySelector('.gallery-overlay-image').src = clickedItem.src;
+  gallery.querySelector('.likes-count').textContent = itemStats[0].textContent;
+  gallery.querySelector('.comments-count').textContent = itemStats[1].textContent;
 
   //  закрываем по клику на крестик
-  galleryClose.addEventListener('click', function () {
-    gallery.classList.add('hidden');
-  });
+  galleryCloseIcon.addEventListener('click', onGalleryCloseClick);
   //  закрываем по клику на Enter, если крестик в фокусе
-  galleryClose.addEventListener('keydown', function () {
-    if (evt.keyCode === 13) {
-      gallery.classList.add('hidden');
-    }
-  });
+  galleryCloseIcon.addEventListener('keydown', onGalleryCloseEnterPress);
   //  закрываем по клику на Escape
-  document.addEventListener('keydown', function () {
-    if (evt.keyCode === 27) {
-      gallery.classList.add('hidden');
-    }
-  });
-});
+  document.addEventListener('keydown', onGalleryCloseEscPress);
+};
+
+//  вешаем обработчик на каждую фотографию
+var addListenersToPictureList = function () {
+  var images = pictureList.querySelectorAll('img');
+  for (var i = 0; i < pictureList.children.length; i++) {
+    images[i].addEventListener('click', onAnyPictureClick);
+  }
+};
+addListenersToPictureList();
 
 //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
 var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
@@ -157,21 +183,25 @@ var decreaseButton = document.querySelector('.upload-resize-controls-button-dec'
 var sizeValue = document.querySelector('.upload-resize-controls-value');
 var imagePreview = document.querySelector('.effect-image-preview');
 
-//  функция увеличения масштаба фото
+//  вынес в отдельныную функцию повторяющийся блок для onIncreaseButtonClick и onDecreaseButtonClick
+var calculateScale = function () {
+  imagePreview.style.transform = 'scale(' + (sizeValue.value / 100) + ')';
+  sizeValue.value += '%';
+};
+
+//  увеличение масштаба фото
 var onIncreaseButtonClick = function () {
   if (parseInt(sizeValue.value, 10) < 100) {
     sizeValue.value = parseInt(sizeValue.value, 10) + 25;
-    imagePreview.style.transform = 'scale(' + (sizeValue.value / 100) + ')';
-    sizeValue.value += '%';
+    calculateScale();
   }
 };
 
-//  функция уменьшения масштаба фото
+//  уменьшение масштаба фото
 var onDecreaseButtonClick = function () {
   if (parseInt(sizeValue.value, 10) > 25) {
     sizeValue.value = parseInt(sizeValue.value, 10) - 25;
-    imagePreview.style.transform = 'scale(' + (sizeValue.value / 100) + ')';
-    sizeValue.value += '%';
+    calculateScale();
   }
 };
 
@@ -180,12 +210,14 @@ increaseButton.addEventListener('click', onIncreaseButtonClick);
 //  обработчик нажатия на кнопку увеличения
 decreaseButton.addEventListener('click', onDecreaseButtonClick);
 
-/*
-//  ползунок слайдера
-var sliderPin = document.querySelector('.upload-effect-level-pin');
+//  слайдер, ползунок, значение ползунка
+var uploadEffectControls = uploadOverlay.querySelector('.upload-effect-level');
+var sliderPin = uploadOverlay.querySelector('.upload-effect-level-pin');
+var effectLevel = uploadOverlay.querySelector('.upload-effect-level-value');
+
 
 //  обработчик взаимодействия с ползунком
-sliderPin.addEventListener('mouseup', function (evt) {
+var onSliderPinClick = function (evt) {
   var windowWidth = window.innerWidth;
   var sliderWidth = document.querySelector('.upload-effect-level-line').clientWidth;
   var pinPosition = evt.clientX;
@@ -193,8 +225,85 @@ sliderPin.addEventListener('mouseup', function (evt) {
   //  определяем положение ползунка на слайдере
   var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
   //  определяем пропорцию эффекта относительно положения ползунка
-  var proportion = (pinPositionOnSlider / sliderWidth).toFixed(2);
-  //  console.log(proportion);
-  proportion += 0;
-});
-*/
+  effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
+};
+
+//  обработчик на ползунке мыши
+sliderPin.addEventListener('mouseup', onSliderPinClick);
+
+//  создаем коллекцию кнопок, которые переключают эффекты
+var uploadEffectPreviewButtons = document.querySelectorAll('.upload-effect-preview');
+
+//  присваиваем этим кнопкам читабельные названия
+var effectNoneButton = uploadEffectPreviewButtons[0];
+var effectChromeButton = uploadEffectPreviewButtons[1];
+var effectSepiaButton = uploadEffectPreviewButtons[2];
+var effectMarvinButton = uploadEffectPreviewButtons[3];
+var effectFobosButton = uploadEffectPreviewButtons[4];
+var effectHeatButton = uploadEffectPreviewButtons[5];
+
+//  прячем слайдер по умолчанию
+var hideUploadEffectControls = function () {
+  uploadEffectControls.classList.add('hidden');
+};
+hideUploadEffectControls();
+
+//  показываем слайдер
+var showUploadEffectControls = function () {
+  uploadEffectControls.classList.remove('hidden');
+};
+
+//  переключает на оригинал (сбрасывает остальные эффекты)
+var onEffectNoneButtonClick = function () {
+  hideUploadEffectControls();
+  imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
+};
+
+//  переключает на "хром"
+var onEffectChromeButtonClick = function () {
+  onEffectNoneButtonClick();
+  showUploadEffectControls();
+  imagePreview.classList.add('upload-effect-chrome');
+  document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
+};
+
+//  переключает на "сепию"
+var onEffectSepiaButtonClick = function () {
+  onEffectNoneButtonClick();
+  showUploadEffectControls();
+  imagePreview.classList.add('upload-effect-sepia');
+  document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
+};
+
+//  переключает на "марвин"
+var onEffectMarvinButtonClick = function () {
+  onEffectNoneButtonClick();
+  showUploadEffectControls();
+  imagePreview.classList.add('upload-effect-marvin');
+  document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
+};
+
+//  переключает на "фобос"
+var onEffectFobosButtonClick = function () {
+  onEffectNoneButtonClick();
+  showUploadEffectControls();
+  imagePreview.classList.add('upload-effect-fobos');
+  document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
+};
+
+//  переключает на "зной"
+var onEffectHeatButtonClick = function () {
+  onEffectNoneButtonClick();
+  showUploadEffectControls();
+  imagePreview.classList.add('upload-effect-heat');
+  document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
+};
+
+//  обавляем обработчики на кнопки
+effectNoneButton.addEventListener('click', onEffectNoneButtonClick);
+effectChromeButton.addEventListener('click', onEffectChromeButtonClick);
+effectSepiaButton.addEventListener('click', onEffectSepiaButtonClick);
+effectMarvinButton.addEventListener('click', onEffectMarvinButtonClick);
+effectFobosButton.addEventListener('click', onEffectFobosButtonClick);
+effectHeatButton.addEventListener('click', onEffectHeatButtonClick);
+

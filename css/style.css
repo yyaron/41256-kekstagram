@@ -309,17 +309,6 @@ body {
 .effect-image-preview {
   vertical-align: middle;
   transform: scale(0.5);
-  /* эффект «Хром» */
-  filter: grayscale(0);
-  /* эффект «Сепия» */
-  filter: sepia(0);
-  /* эффект «Марвин» */
-  filter: invert(0%);
-  /* эффект «Фобос» */
-  filter: blur(0px);
-  /* эффект «Зной» */
-  filter: brightness(1);
-  */
 }
 
 .upload-effect-controls input[type=radio] {
