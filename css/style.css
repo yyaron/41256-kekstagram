@@ -308,7 +308,7 @@ body {
 
 .effect-image-preview {
   vertical-align: middle;
-  transform: scale(0.5);
+  transform: scale(1);
 }
 
 .upload-effect-controls input[type=radio] {

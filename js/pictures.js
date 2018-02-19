@@ -75,7 +75,7 @@ pictureList.appendChild(fragment);
 //  //////////////////  //
 
 //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
-var uploadForm = document.querySelector('#upload-file');
+var uploadFile = document.querySelector('#upload-file');
 var uploadOverlay = document.querySelector('.upload-overlay');
 var uploadFormClose = document.querySelector('.upload-form-cancel');
 
@@ -94,7 +94,7 @@ var onOverlayCloseEnterPress = function (evt) {
 };
 
 //  функция открытия окна превью
-var onUploadFormChange = function () {
+var onUploadFileChange = function () {
   uploadOverlay.classList.remove('hidden');
 
   //  закрываем по клику
@@ -108,7 +108,7 @@ var onUploadFormChange = function () {
 //  закрытие окна превью
 var onUploadOverlayCloseClick = function () {
   uploadOverlay.classList.add('hidden');
-  uploadForm.value = '';
+  uploadFile.value = '';
 
   //  удаляем обработчики по закрытию окна
   uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
@@ -117,7 +117,7 @@ var onUploadOverlayCloseClick = function () {
 };
 
 //  показываем окно превью по изменению значения
-uploadForm.addEventListener('change', onUploadFormChange);
+uploadFile.addEventListener('change', onUploadFileChange);
 
 //  окно галереи, кнопка закрытия окна
 var gallery = document.querySelector('.gallery-overlay');
@@ -215,9 +215,10 @@ var uploadEffectControls = uploadOverlay.querySelector('.upload-effect-level');
 var sliderPin = uploadOverlay.querySelector('.upload-effect-level-pin');
 var effectLevel = uploadOverlay.querySelector('.upload-effect-level-value');
 
+var currentAppliedFilterFunction;
 
 //  обработчик взаимодействия с ползунком
-var onSliderPinClick = function (evt) {
+var onPinPositionSliderMouseup = function (evt) {
   var windowWidth = window.innerWidth;
   var sliderWidth = document.querySelector('.upload-effect-level-line').clientWidth;
   var pinPosition = evt.clientX;
@@ -226,10 +227,11 @@ var onSliderPinClick = function (evt) {
   var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
   //  определяем пропорцию эффекта относительно положения ползунка
   effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
+  filterFunctions[currentAppliedFilterFunction]();
 };
 
 //  обработчик на ползунке мыши
-sliderPin.addEventListener('mouseup', onSliderPinClick);
+sliderPin.addEventListener('mouseup', onPinPositionSliderMouseup);
 
 //  создаем коллекцию кнопок, которые переключают эффекты
 var uploadEffectPreviewButtons = document.querySelectorAll('.upload-effect-preview');
@@ -245,6 +247,7 @@ var effectHeatButton = uploadEffectPreviewButtons[5];
 //  прячем слайдер по умолчанию
 var hideUploadEffectControls = function () {
   uploadEffectControls.classList.add('hidden');
+  effectLevel.value = 1;
 };
 hideUploadEffectControls();
 
@@ -253,57 +256,77 @@ var showUploadEffectControls = function () {
   uploadEffectControls.classList.remove('hidden');
 };
 
-//  переключает на оригинал (сбрасывает остальные эффекты)
-var onEffectNoneButtonClick = function () {
-  hideUploadEffectControls();
+
+var clearLastEffect = function () {
   imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
 };
 
-//  переключает на "хром"
-var onEffectChromeButtonClick = function () {
-  onEffectNoneButtonClick();
-  showUploadEffectControls();
-  imagePreview.classList.add('upload-effect-chrome');
-  document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
+var filterFunctions = {
+  //  переключает на оригинал (сбрасывает остальные эффекты)
+  onEffectNoneButtonClick: function () {
+    clearLastEffect();
+    hideUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectNoneButtonClick';
+    imagePreview.style.filter = '';
+  },
+
+  //  переключает на "хром"
+  onEffectChromeButtonClick: function () {
+    clearLastEffect();
+    showUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectChromeButtonClick';
+    imagePreview.classList.add('upload-effect-chrome');
+    document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
+  },
+
+  //  переключает на "сепию"
+  onEffectSepiaButtonClick: function () {
+    clearLastEffect();
+    showUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
+    imagePreview.classList.add('upload-effect-sepia');
+    document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
+  },
+
+  //  переключает на "марвин"
+  onEffectMarvinButtonClick: function () {
+    clearLastEffect();
+    showUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
+    imagePreview.classList.add('upload-effect-marvin');
+    document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
+  },
+
+  //  переключает на "фобос"
+  onEffectFobosButtonClick: function () {
+    clearLastEffect();
+    showUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectFobosButtonClick';
+    imagePreview.classList.add('upload-effect-fobos');
+    document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
+  },
+
+  //  переключает на "зной"
+  onEffectHeatButtonClick: function () {
+    clearLastEffect();
+    showUploadEffectControls();
+
+    currentAppliedFilterFunction = 'onEffectHeatButtonClick';
+    imagePreview.classList.add('upload-effect-heat');
+    document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
+  }
 };
 
-//  переключает на "сепию"
-var onEffectSepiaButtonClick = function () {
-  onEffectNoneButtonClick();
-  showUploadEffectControls();
-  imagePreview.classList.add('upload-effect-sepia');
-  document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
-};
-
-//  переключает на "марвин"
-var onEffectMarvinButtonClick = function () {
-  onEffectNoneButtonClick();
-  showUploadEffectControls();
-  imagePreview.classList.add('upload-effect-marvin');
-  document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
-};
-
-//  переключает на "фобос"
-var onEffectFobosButtonClick = function () {
-  onEffectNoneButtonClick();
-  showUploadEffectControls();
-  imagePreview.classList.add('upload-effect-fobos');
-  document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
-};
-
-//  переключает на "зной"
-var onEffectHeatButtonClick = function () {
-  onEffectNoneButtonClick();
-  showUploadEffectControls();
-  imagePreview.classList.add('upload-effect-heat');
-  document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
-};
-
-//  обавляем обработчики на кнопки
-effectNoneButton.addEventListener('click', onEffectNoneButtonClick);
-effectChromeButton.addEventListener('click', onEffectChromeButtonClick);
-effectSepiaButton.addEventListener('click', onEffectSepiaButtonClick);
-effectMarvinButton.addEventListener('click', onEffectMarvinButtonClick);
-effectFobosButton.addEventListener('click', onEffectFobosButtonClick);
-effectHeatButton.addEventListener('click', onEffectHeatButtonClick);
+//  добавляем обработчики на кнопки
+effectNoneButton.addEventListener('click', filterFunctions.onEffectNoneButtonClick);
+effectChromeButton.addEventListener('click', filterFunctions.onEffectChromeButtonClick);
+effectSepiaButton.addEventListener('click', filterFunctions.onEffectSepiaButtonClick);
+effectMarvinButton.addEventListener('click', filterFunctions.onEffectMarvinButtonClick);
+effectFobosButton.addEventListener('click', filterFunctions.onEffectFobosButtonClick);
+effectHeatButton.addEventListener('click', filterFunctions.onEffectHeatButtonClick);
 
