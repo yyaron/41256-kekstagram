@@ -350,8 +350,7 @@ effectMarvinButton.addEventListener('click', filterFunctions.onEffectMarvinButto
 effectFobosButton.addEventListener('click', filterFunctions.onEffectFobosButtonClick);
 effectHeatButton.addEventListener('click', filterFunctions.onEffectHeatButtonClick);
 
-//  форма загрузки фото, поле ввода хэштегоы
-var uploadForm = document.querySelector('.upload-form')
+//  поле ввода хэштегов
 var uploadFormHashtagField = uploadOverlay.querySelector('.upload-form-hashtags');
 
 uploadFormHashtagField.addEventListener('input', function (evt) {
@@ -376,10 +375,10 @@ uploadFormHashtagField.addEventListener('input', function (evt) {
       //  убираем это сообщение для последнего элемента на случай,
       //  если в конце строки будет висячий пробел
       if (hashtags[i] === hashtags[hashtags.length - 1]) {
-        target.setCustomValidity('')
+        target.setCustomValidity('');
       }
     } else {
-    target.setCustomValidity('');
+      target.setCustomValidity('');
     }
   }
 });
