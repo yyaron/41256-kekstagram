@@ -217,6 +217,9 @@ var effectLevel = uploadOverlay.querySelector('.upload-effect-level-value');
 
 var currentAppliedFilterFunction;
 
+//  флаг
+var sliderPinIsDragged = false;
+
 //  обработчик взаимодействия с ползунком
 var onPinPositionSliderMouseup = function (evt) {
   var windowWidth = window.innerWidth;
@@ -225,9 +228,18 @@ var onPinPositionSliderMouseup = function (evt) {
 
   //  определяем положение ползунка на слайдере
   var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
+
+  sliderPinIsDragged = true;
   //  определяем пропорцию эффекта относительно положения ползунка
   effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
   filterFunctions[currentAppliedFilterFunction]();
+};
+
+// проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
+var checkSliderPinStatus = function () {
+  if (!sliderPinIsDragged) {
+    effectLevel.value = 1;
+  }
 };
 
 //  обработчик на ползунке мыши
@@ -247,7 +259,7 @@ var effectHeatButton = uploadEffectPreviewButtons[5];
 //  прячем слайдер по умолчанию
 var hideUploadEffectControls = function () {
   uploadEffectControls.classList.add('hidden');
-  effectLevel.value = 1;
+
 };
 hideUploadEffectControls();
 
@@ -256,15 +268,16 @@ var showUploadEffectControls = function () {
   uploadEffectControls.classList.remove('hidden');
 };
 
-
-var clearLastEffect = function () {
-  imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
-};
-
+//  объект с фильтрами
 var filterFunctions = {
-  //  переключает на оригинал (сбрасывает остальные эффекты)
+  //  сбрасывает остальные эффекты
+  clearLastEffect: function () {
+    imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
+  },
+
+  //  переключает на оригинал
   onEffectNoneButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     hideUploadEffectControls();
 
     currentAppliedFilterFunction = 'onEffectNoneButtonClick';
@@ -273,9 +286,11 @@ var filterFunctions = {
 
   //  переключает на "хром"
   onEffectChromeButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectChromeButtonClick';
     imagePreview.classList.add('upload-effect-chrome');
     document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
@@ -283,9 +298,11 @@ var filterFunctions = {
 
   //  переключает на "сепию"
   onEffectSepiaButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
     imagePreview.classList.add('upload-effect-sepia');
     document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
@@ -293,8 +310,9 @@ var filterFunctions = {
 
   //  переключает на "марвин"
   onEffectMarvinButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
     imagePreview.classList.add('upload-effect-marvin');
@@ -303,8 +321,9 @@ var filterFunctions = {
 
   //  переключает на "фобос"
   onEffectFobosButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectFobosButtonClick';
     imagePreview.classList.add('upload-effect-fobos');
@@ -313,8 +332,9 @@ var filterFunctions = {
 
   //  переключает на "зной"
   onEffectHeatButtonClick: function () {
-    clearLastEffect();
+    filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectHeatButtonClick';
     imagePreview.classList.add('upload-effect-heat');
@@ -330,3 +350,38 @@ effectMarvinButton.addEventListener('click', filterFunctions.onEffectMarvinButto
 effectFobosButton.addEventListener('click', filterFunctions.onEffectFobosButtonClick);
 effectHeatButton.addEventListener('click', filterFunctions.onEffectHeatButtonClick);
 
+//  форма загрузки фото, поле ввода хэштегоы
+var uploadForm = document.querySelector('.upload-form')
+var uploadFormHashtagField = uploadOverlay.querySelector('.upload-form-hashtags');
+
+uploadFormHashtagField.addEventListener('input', function (evt) {
+  var target = evt.target;
+  //  получаем строку введенных хэштегов и превращаем ее в массив
+  var hashtags = target.value.split(' ');
+  //  проверка наличия решетки в начале, проверка наличия пробела после хэштега
+  var pattern1 = /[#].*/;
+  var pattern2 = /[#].*[ ]/;
+
+  for (var i = 0; i < hashtags.length; i++) {
+    if (hashtags.length > 5) {
+      target.setCustomValidity('Не больше 5 хэштегов.');
+    } else if (hashtags[i].length < 3) {
+      target.setCustomValidity('Минимальная длина хэштега - 3 знака. В строке не должно быть лишних пробелов.');
+    } else if (hashtags[i].length > 20) {
+      target.setCustomValidity('Макстмальная длина хэштега - 20 знаков.');
+    } else if (!pattern1.test(hashtags[i])) {
+      target.setCustomValidity('Хэштег должен начинаться с решетки.');
+    } else if (!pattern2.test(hashtags[i])) {
+      target.setCustomValidity('Хэштеги отделяются пробелами.');
+      //  убираем это сообщение для последнего элемента на случай,
+      //  если в конце строки будет висячий пробел
+      if (hashtags[i] === hashtags[hashtags.length - 1]) {
+        target.setCustomValidity('')
+      }
+    } else {
+    target.setCustomValidity('');
+    }
+  }
+});
+
+//  var pattern = /[#][a-zA-Zа-яёєїА-ЯЁЄЇ0-9]{3,20}/;
