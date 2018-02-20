@@ -231,6 +231,7 @@ body {
 
   text-indent: -900em;
   font-size: 0;
+  cursor: pointer;
 }
 
 .upload-form-cancel:active {
@@ -280,10 +281,12 @@ body {
   line-height: 20px;
 
   border-radius: 50% 0 0 50%;
+  cursor: pointer;
 }
 
 .upload-resize-controls-button-inc {
   border-radius: 0 50% 50% 0;
+  cursor: pointer;
 }
 
 /* Эффекты */
@@ -305,6 +308,7 @@ body {
 
 .effect-image-preview {
   vertical-align: middle;
+  transform: scale(1);
 }
 
 .upload-effect-controls input[type=radio] {
@@ -449,6 +453,7 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   background: rgba(255, 231, 82, 0.2);
   border: 0;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .upload-form-submit:active {
