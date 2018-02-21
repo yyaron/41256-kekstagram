@@ -368,10 +368,10 @@ var checkDoubledSpaces = function (hashtags, input) {
       input.setCustomValidity('');
     }
   }
-}
+};
 
 //  проверяем повторяющиеся хэштеги
-var checkDuplicates = function(hashtags, input) {
+var checkDuplicates = function (hashtags, input) {
   var lowerCaseItems = hashtags.map(function (item) {
     return item.toLowerCase();
   });
@@ -388,7 +388,7 @@ var checkDuplicates = function(hashtags, input) {
       input.setCustomValidity('');
     }
   }
-}
+};
 
 //  поле ввода хэштегов
 var uploadFormHashtagField = uploadOverlay.querySelector('.upload-form-hashtags');
@@ -401,12 +401,12 @@ uploadFormHashtagField.addEventListener('input', function (evt) {
   //  получаем строку введенных хэштегов и превращаем ее в массив
   hashtags = target.value.split(' ');
 
-  // если возникла ошибка 2+ пробела выходим с функции, тк validationMessage уже установлен
+  //  если возникла ошибка 2+ пробела выходим с функции, тк validationMessage уже установлен
   checkDoubledSpaces(hashtags, target);
   if (target.validationMessage !== '') {
     return;
   }
-  // если возникла ошибка с дубликатами выходим с функции, тк validationMessage уже установлен
+  //  если возникла ошибка с дубликатами выходим с функции, тк validationMessage уже установлен
   checkDuplicates(hashtags, target);
   if (target.validationMessage !== '') {
     return;
@@ -415,8 +415,6 @@ uploadFormHashtagField.addEventListener('input', function (evt) {
     target.setCustomValidity('Не больше 5 хэштегов.');
     return;
   }
-
-console.log(hashtags);
 
   for (var i = 0; i < hashtags.length; i++) {
     if (hashtags[i].length < 3) {
@@ -427,11 +425,6 @@ console.log(hashtags);
       target.setCustomValidity('Хэштег должен начинаться с решетки.');
     } else if (hashtags[i].indexOf(',') !== -1 || hashtags[i].indexOf(';') !== -1) {
       target.setCustomValidity('Хэштеги нужно отделять пробелами.');
-      //  убираем это сообщение для последнего элемента на случай,
-      //  если в конце строки будет висячий пробел
-      //if (hashtags[i] === hashtags[hashtags.length - 1]) {
-      //  target.setCustomValidity('');
-      //}
     } else {
       target.setCustomValidity('');
     }
@@ -440,6 +433,5 @@ console.log(hashtags);
 
 var form = document.querySelector('#upload-select-image');
 form.addEventListener('submit', function (evt) {
-  console.log(hashtags);
   evt.preventDefault();
 });
