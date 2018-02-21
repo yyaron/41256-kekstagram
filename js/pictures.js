@@ -273,14 +273,15 @@ var filterFunctions = {
   //  сбрасывает остальные эффекты
   clearLastEffect: function () {
     imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
-    checkSliderPinStatus();
   },
 
   //  переключает на оригинал
   onEffectNoneButtonClick: function () {
     filterFunctions.clearLastEffect();
     hideUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectNoneButtonClick';
     imagePreview.style.filter = '';
   },
@@ -289,6 +290,7 @@ var filterFunctions = {
   onEffectChromeButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
     sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectChromeButtonClick';
@@ -300,6 +302,7 @@ var filterFunctions = {
   onEffectSepiaButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
     sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
@@ -311,7 +314,9 @@ var filterFunctions = {
   onEffectMarvinButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
     imagePreview.classList.add('upload-effect-marvin');
     document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
@@ -321,7 +326,9 @@ var filterFunctions = {
   onEffectFobosButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectFobosButtonClick';
     imagePreview.classList.add('upload-effect-fobos');
     document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
@@ -331,7 +338,9 @@ var filterFunctions = {
   onEffectHeatButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
+    checkSliderPinStatus();
 
+    sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectHeatButtonClick';
     imagePreview.classList.add('upload-effect-heat');
     document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
@@ -388,9 +397,7 @@ var hashtags = [];
 uploadFormHashtagField.addEventListener('input', function (evt) {
   var target = evt.target;
   //  проверка наличия решетки в начале, проверка наличия пробела после хэштега
-  var pattern1 = /[#].*/;
-  var pattern2 = /[#].*[ ]/;
-
+  var pattern = /[#].*/;
   //  получаем строку введенных хэштегов и превращаем ее в массив
   hashtags = target.value.split(' ');
 
@@ -408,20 +415,23 @@ uploadFormHashtagField.addEventListener('input', function (evt) {
     target.setCustomValidity('Не больше 5 хэштегов.');
     return;
   }
+
+console.log(hashtags);
+
   for (var i = 0; i < hashtags.length; i++) {
     if (hashtags[i].length < 3) {
       target.setCustomValidity('Минимальная длина хэштега - 3 знака. В строке не должно быть лишних пробелов.');
     } else if (hashtags[i].length > 20) {
       target.setCustomValidity('Максимальная длина хэштега - 20 знаков.');
-    } else if (!pattern1.test(hashtags[i])) {
+    } else if (!pattern.test(hashtags[i])) {
       target.setCustomValidity('Хэштег должен начинаться с решетки.');
-    } else if (!pattern2.test(hashtags[i])) {
+    } else if (hashtags[i].indexOf(',') !== -1 || hashtags[i].indexOf(';') !== -1) {
       target.setCustomValidity('Хэштеги нужно отделять пробелами.');
       //  убираем это сообщение для последнего элемента на случай,
       //  если в конце строки будет висячий пробел
-      if (hashtags[i] === hashtags[hashtags.length - 1]) {
-        target.setCustomValidity('');
-      }
+      //if (hashtags[i] === hashtags[hashtags.length - 1]) {
+      //  target.setCustomValidity('');
+      //}
     } else {
       target.setCustomValidity('');
     }
