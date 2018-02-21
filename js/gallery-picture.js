@@ -20,7 +20,7 @@
   var friendPictures = getFriendPictures();
 
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
-  window.pictureList = document.querySelector('.pictures');
+  var pictureList = document.querySelector('.pictures');
 
   var renderImage = function (picture) {
     //  сохраняем в переменную шаблон

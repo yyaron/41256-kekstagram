@@ -36,9 +36,9 @@
   decreaseButton.addEventListener('click', onDecreaseButtonClick);
 
   //  слайдер, ползунок, значение ползунка
-  var uploadEffectControls = window.uploadOverlay.querySelector('.upload-effect-level');
-  var sliderPin = window.uploadOverlay.querySelector('.upload-effect-level-pin');
-  var effectLevel = window.uploadOverlay.querySelector('.upload-effect-level-value');
+  var uploadEffectControls = document.querySelector('.upload-effect-level');
+  var sliderPin = document.querySelector('.upload-effect-level-pin');
+  var effectLevel = document.querySelector('.upload-effect-level-value');
 
   var currentAppliedFilterFunction;
 
@@ -214,7 +214,7 @@
   };
 
   //  поле ввода хэштегов
-  var uploadFormHashtagField = window.uploadOverlay.querySelector('.upload-form-hashtags');
+  var uploadFormHashtagField = document.querySelector('.upload-form-hashtags');
   var hashtags = [];
 
   uploadFormHashtagField.addEventListener('input', function (evt) {
@@ -247,11 +247,9 @@
         target.setCustomValidity('Максимальная длина хэштега - 20 знаков.');
         break;
       } else if (!pattern.test(hashtags[i])) {
-        debugger;
         target.setCustomValidity('Хэштег должен начинаться с решетки.');
         break;
       } else if (hashtags[i].indexOf(',') !== -1 || hashtags[i].indexOf(';') !== -1) {
-        debugger;
         target.setCustomValidity('Хэштеги нужно отделять пробелами.');
         break;
       } else {

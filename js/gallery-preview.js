@@ -8,7 +8,7 @@
 
   //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
   var uploadFile = document.querySelector('#upload-file');
-  window.uploadOverlay = document.querySelector('.upload-overlay');
+  var uploadOverlay = document.querySelector('.upload-overlay');
   var uploadFormClose = document.querySelector('.upload-form-cancel');
 
   //  функция закрытия окна превью по нажатии на Escape
@@ -102,8 +102,8 @@
 
   //  вешаем обработчик на каждую фотографию
   var addListenersToPictureList = function () {
-    var images = window.pictureList.querySelectorAll('img');
-    for (var i = 0; i < window.pictureList.children.length; i++) {
+    var images = document.querySelectorAll('img');
+    for (var i = 0; i < document.querySelector('.pictures').children.length; i++) {
       images[i].addEventListener('click', onAnyPictureClick);
     }
   };

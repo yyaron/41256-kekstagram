@@ -25,5 +25,5 @@ window.data = (function () {
       var commentsNumber = Math.round(Math.random() * arr.length);
       return commentsNumber;
     },
-  }
+  };
 })();
