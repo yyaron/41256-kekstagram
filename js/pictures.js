@@ -273,6 +273,7 @@ var filterFunctions = {
   //  сбрасывает остальные эффекты
   clearLastEffect: function () {
     imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
+    checkSliderPinStatus();
   },
 
   //  переключает на оригинал
@@ -288,7 +289,6 @@ var filterFunctions = {
   onEffectChromeButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
-    checkSliderPinStatus();
 
     sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectChromeButtonClick';
@@ -300,7 +300,6 @@ var filterFunctions = {
   onEffectSepiaButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
-    checkSliderPinStatus();
 
     sliderPinIsDragged = false;
     currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
@@ -312,7 +311,6 @@ var filterFunctions = {
   onEffectMarvinButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
-    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
     imagePreview.classList.add('upload-effect-marvin');
@@ -323,7 +321,6 @@ var filterFunctions = {
   onEffectFobosButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
-    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectFobosButtonClick';
     imagePreview.classList.add('upload-effect-fobos');
@@ -334,7 +331,6 @@ var filterFunctions = {
   onEffectHeatButtonClick: function () {
     filterFunctions.clearLastEffect();
     showUploadEffectControls();
-    checkSliderPinStatus();
 
     currentAppliedFilterFunction = 'onEffectHeatButtonClick';
     imagePreview.classList.add('upload-effect-heat');
@@ -350,28 +346,77 @@ effectMarvinButton.addEventListener('click', filterFunctions.onEffectMarvinButto
 effectFobosButton.addEventListener('click', filterFunctions.onEffectFobosButtonClick);
 effectHeatButton.addEventListener('click', filterFunctions.onEffectHeatButtonClick);
 
+//  проверяем двойные пробелы
+var checkDoubledSpaces = function (hashtags, input) {
+  for (var i = 0, len = hashtags.length; i < len; i++) {
+    var hashtag = hashtags[i];
+
+    if (hashtag === '') {
+      input.setCustomValidity('Хештеги разделены больше чем одним пробелом после ' + i + '-го хештега.');
+
+      break;
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+}
+
+//  проверяем повторяющиеся хэштеги
+var checkDuplicates = function(hashtags, input) {
+  var lowerCaseItems = hashtags.map(function (item) {
+    return item.toLowerCase();
+  });
+
+  for (var i = 0, len = hashtags.length; i < len; i++) {
+    var hashtag = hashtags[i];
+    var hastagIndex = lowerCaseItems.indexOf(hashtag.toLowerCase());
+
+    if (hastagIndex !== i) {
+      input.setCustomValidity('Хештеги ' + hashtags[hastagIndex] + ' и ' + hashtags[i] + ' повторяются.');
+      break;
+
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+}
+
 //  поле ввода хэштегов
 var uploadFormHashtagField = uploadOverlay.querySelector('.upload-form-hashtags');
+var hashtags = [];
 
 uploadFormHashtagField.addEventListener('input', function (evt) {
   var target = evt.target;
-  //  получаем строку введенных хэштегов и превращаем ее в массив
-  var hashtags = target.value.split(' ');
   //  проверка наличия решетки в начале, проверка наличия пробела после хэштега
   var pattern1 = /[#].*/;
   var pattern2 = /[#].*[ ]/;
 
+  //  получаем строку введенных хэштегов и превращаем ее в массив
+  hashtags = target.value.split(' ');
+
+  // если возникла ошибка 2+ пробела выходим с функции, тк validationMessage уже установлен
+  checkDoubledSpaces(hashtags, target);
+  if (target.validationMessage !== '') {
+    return;
+  }
+  // если возникла ошибка с дубликатами выходим с функции, тк validationMessage уже установлен
+  checkDuplicates(hashtags, target);
+  if (target.validationMessage !== '') {
+    return;
+  }
+  if (hashtags.length > 5) {
+    target.setCustomValidity('Не больше 5 хэштегов.');
+    return;
+  }
   for (var i = 0; i < hashtags.length; i++) {
-    if (hashtags.length > 5) {
-      target.setCustomValidity('Не больше 5 хэштегов.');
-    } else if (hashtags[i].length < 3) {
+    if (hashtags[i].length < 3) {
       target.setCustomValidity('Минимальная длина хэштега - 3 знака. В строке не должно быть лишних пробелов.');
     } else if (hashtags[i].length > 20) {
-      target.setCustomValidity('Макстмальная длина хэштега - 20 знаков.');
+      target.setCustomValidity('Максимальная длина хэштега - 20 знаков.');
     } else if (!pattern1.test(hashtags[i])) {
       target.setCustomValidity('Хэштег должен начинаться с решетки.');
     } else if (!pattern2.test(hashtags[i])) {
-      target.setCustomValidity('Хэштеги отделяются пробелами.');
+      target.setCustomValidity('Хэштеги нужно отделять пробелами.');
       //  убираем это сообщение для последнего элемента на случай,
       //  если в конце строки будет висячий пробел
       if (hashtags[i] === hashtags[hashtags.length - 1]) {
@@ -383,4 +428,8 @@ uploadFormHashtagField.addEventListener('input', function (evt) {
   }
 });
 
-//  var pattern = /[#][a-zA-Zа-яёєїА-ЯЁЄЇ0-9]{3,20}/;
+var form = document.querySelector('#upload-select-image');
+form.addEventListener('submit', function (evt) {
+  console.log(hashtags);
+  evt.preventDefault();
+});
