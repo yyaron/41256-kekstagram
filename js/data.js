@@ -22,8 +22,7 @@ window.data = (function () {
     //  максимальное значение привязаны к величине массива COMMENTS.
     //  в перспективе можно использовать эту функцию для получения случайного комментария.
     getCommentsNumber: function (arr) {
-      var commentsNumber = Math.round(Math.random() * arr.length);
-      return commentsNumber;
+      return Math.round(Math.random() * arr.length);
     },
   };
 })();

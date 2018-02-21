@@ -61,10 +61,11 @@
   };
 
   // проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
-  var checkSliderPinStatus = function () {
+  var updateEffectLevelValue = function () {
     if (!sliderPinIsDragged) {
       effectLevel.value = 1;
     }
+    sliderPinIsDragged = false;
   };
 
   //  обработчик на ползунке мыши
@@ -104,9 +105,8 @@
     onEffectNoneButtonClick: function () {
       filterFunctions.clearLastEffect();
       hideUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectNoneButtonClick';
       imagePreview.style.filter = '';
     },
@@ -115,9 +115,8 @@
     onEffectChromeButtonClick: function () {
       filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectChromeButtonClick';
       imagePreview.classList.add('upload-effect-chrome');
       document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
@@ -127,9 +126,8 @@
     onEffectSepiaButtonClick: function () {
       filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
       imagePreview.classList.add('upload-effect-sepia');
       document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
@@ -139,9 +137,8 @@
     onEffectMarvinButtonClick: function () {
       filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
       imagePreview.classList.add('upload-effect-marvin');
       document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
@@ -151,9 +148,8 @@
     onEffectFobosButtonClick: function () {
       filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectFobosButtonClick';
       imagePreview.classList.add('upload-effect-fobos');
       document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
@@ -163,9 +159,8 @@
     onEffectHeatButtonClick: function () {
       filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      checkSliderPinStatus();
+      updateEffectLevelValue();
 
-      sliderPinIsDragged = false;
       currentAppliedFilterFunction = 'onEffectHeatButtonClick';
       imagePreview.classList.add('upload-effect-heat');
       document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
