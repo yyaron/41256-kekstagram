@@ -95,7 +95,7 @@
 
   //  обработчик нажатия кнопки на пине
   sliderPin.addEventListener('mousedown', function (evt) {
-    evt.preventDefault;
+    evt.preventDefault();
 
     var startCoordsX = evt.clientX;
 
@@ -109,29 +109,29 @@
 
       startCoordsX = moveEvt.clientX;
 
+
       sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
 
+      console.log(sliderPin.style.left);
       //  не дает пину выйти за пределы шкалы
-      if (parseInt(sliderPin.style.left) <= 0) {
-         sliderPin.style.left = 0 + 'px';
+      if (parseInt(sliderPin.style.left, 10) <= 0) {
+        sliderPin.style.left = 0 + 'px';
       }
-      if (parseInt(sliderPin.style.left) >= sliderWidth) {
-          sliderPin.style.left = sliderWidth + 'px';
+      if (parseInt(sliderPin.style.left, 10) >= sliderWidth) {
+        sliderPin.style.left = sliderWidth + 'px';
       }
     };
 
     //  обработчик отпускания пина
-    var onPinPositionSliderMouseup = function (evt) {
-      evt.preventDefault;
+    var onPinPositionSliderMouseup = function (upEvt) {
+      upEvt.preventDefault();
       document.removeEventListener('mousemove', onPinPositionSliderMousemove);
       document.removeEventListener('mouseup', onPinPositionSliderMouseup);
 
       var windowWidth = window.innerWidth;
 
-      var pinPosition = evt.clientX;
-
       //  определяем положение ползунка на слайдере
-      var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
+      var pinPositionOnSlider = startCoordsX - ((windowWidth - sliderWidth) / 2);
 
       sliderPinIsDragged = true;
       //  определяем пропорцию эффекта относительно положения ползунка
