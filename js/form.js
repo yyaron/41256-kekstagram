@@ -92,52 +92,50 @@
   //  флаг
   var sliderPinIsDragged = false;
 
+  //  обработчик перетаскивания пина
+  var onPinPositionSliderMousemove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    window.sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
+
+    var shift = window.startCoordsX - moveEvt.clientX;
+
+    window.startCoordsX = moveEvt.clientX;
+
+
+    sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
+
+    //  не дает пину выйти за пределы шкалы
+    if (parseInt(sliderPin.style.left, 10) <= 0) {
+      sliderPin.style.left = 0 + 'px';
+    }
+    if (parseInt(sliderPin.style.left, 10) >= window.sliderWidth) {
+      sliderPin.style.left = window.sliderWidth + 'px';
+    }
+  };
+
+  //  обработчик отпускания пина
+  var onPinPositionSliderMouseup = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onPinPositionSliderMousemove);
+    document.removeEventListener('mouseup', onPinPositionSliderMouseup);
+
+    var windowWidth = window.innerWidth;
+
+    //  определяем положение ползунка на слайдере
+    var pinPositionOnSlider = window.startCoordsX - ((windowWidth - window.sliderWidth) / 2);
+
+    sliderPinIsDragged = true;
+    //  определяем пропорцию эффекта относительно положения ползунка
+    effectLevel.value = (pinPositionOnSlider / window.sliderWidth).toFixed(2);
+    filterFunctions[currentAppliedFilterFunction]();
+  };
 
   //  обработчик нажатия кнопки на пине
   sliderPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var startCoordsX = evt.clientX;
-
-    var sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
-
-    //  обработчик перетаскивания пина
-    var onPinPositionSliderMousemove = function (moveEvt) {
-      moveEvt.preventDefault();
-
-      var shift = startCoordsX - moveEvt.clientX;
-
-      startCoordsX = moveEvt.clientX;
-
-
-      sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
-
-      //  не дает пину выйти за пределы шкалы
-      if (parseInt(sliderPin.style.left, 10) <= 0) {
-        sliderPin.style.left = 0 + 'px';
-      }
-      if (parseInt(sliderPin.style.left, 10) >= sliderWidth) {
-        sliderPin.style.left = sliderWidth + 'px';
-      }
-    };
-
-    //  обработчик отпускания пина
-    var onPinPositionSliderMouseup = function (upEvt) {
-      upEvt.preventDefault();
-      document.removeEventListener('mousemove', onPinPositionSliderMousemove);
-      document.removeEventListener('mouseup', onPinPositionSliderMouseup);
-
-      var windowWidth = window.innerWidth;
-
-      //  определяем положение ползунка на слайдере
-      var pinPositionOnSlider = startCoordsX - ((windowWidth - sliderWidth) / 2);
-
-      sliderPinIsDragged = true;
-      //  определяем пропорцию эффекта относительно положения ползунка
-      effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
-      filterFunctions[currentAppliedFilterFunction]();
-    };
-
+    window.startCoordsX = evt.clientX;
     //  обработчик пертаскивания пина
     document.addEventListener('mousemove', onPinPositionSliderMousemove);
     //  обработчик отпускания пина
