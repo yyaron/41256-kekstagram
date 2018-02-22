@@ -112,7 +112,6 @@
 
       sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
 
-      console.log(sliderPin.style.left);
       //  не дает пину выйти за пределы шкалы
       if (parseInt(sliderPin.style.left, 10) <= 0) {
         sliderPin.style.left = 0 + 'px';
