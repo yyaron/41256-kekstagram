@@ -3,68 +3,20 @@
 
 (function () {
 
-  var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
-
-  //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
-  var uploadFile = document.querySelector('#upload-file');
-  var uploadOverlay = document.querySelector('.upload-overlay');
-  var uploadFormClose = document.querySelector('.upload-form-cancel');
-
-  //  функция закрытия окна превью по нажатии на Escape
-  var onOverlayCloseEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      onUploadOverlayCloseClick();
-    }
-  };
-
-  //  функция закрытия окна превью по нажатии на Enter
-  var onOverlayCloseEnterPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      onUploadOverlayCloseClick();
-    }
-  };
-
-  //  функция открытия окна превью
-  var onUploadFileChange = function () {
-    uploadOverlay.classList.remove('hidden');
-
-    //  закрываем по клику
-    uploadFormClose.addEventListener('click', onUploadOverlayCloseClick);
-    //  закрываем по нажатии на Escape
-    document.addEventListener('keydown', onOverlayCloseEscPress);
-    //  закрываем по нажатии на Enter, если крестик в фокусе
-    uploadFormClose.addEventListener('keydown', onOverlayCloseEnterPress);
-  };
-
-  //  закрытие окна превью
-  var onUploadOverlayCloseClick = function () {
-    uploadOverlay.classList.add('hidden');
-    uploadFile.value = '';
-
-    //  удаляем обработчики по закрытию окна
-    uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
-    document.removeEventListener('keydown', onOverlayCloseEscPress);
-    uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
-  };
-
-  //  показываем окно превью по изменению значения
-  uploadFile.addEventListener('change', onUploadFileChange);
-
   //  окно галереи, кнопка закрытия окна
   var gallery = document.querySelector('.gallery-overlay');
   var galleryCloseIcon = gallery.querySelector('.gallery-overlay-close');
 
   //  закрытие окна галереи по нажатии на Enter
   var onGalleryCloseEnterPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    if (evt.keyCode === window.ENTER_KEYCODE) {
       onGalleryCloseClick();
     }
   };
 
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+    if (evt.keyCode === window.ESC_KEYCODE) {
       onGalleryCloseClick();
     }
   };

@@ -4,6 +4,8 @@
 window.data = (function () {
   var LIKES_MIN = 15;
   var LIKES_MAX = 200;
+  window.ESC_KEYCODE = 27;
+  window.ENTER_KEYCODE = 13;
   window.COMMENTS = [
     'Всё отлично!',
     'В целом всё неплохо. Но не всё.',
