@@ -2,6 +2,53 @@
 //  form.js --- модуль, который работает с формой редактирования изображения
 
 (function () {
+
+  //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
+  var uploadFile = document.querySelector('#upload-file');
+  var uploadOverlay = document.querySelector('.upload-overlay');
+  var uploadFormClose = document.querySelector('.upload-form-cancel');
+
+  //  функция закрытия окна превью по нажатии на Escape
+  var onOverlayCloseEscPress = function (evt) {
+    if (evt.keyCode === window.ESC_KEYCODE) {
+      onUploadOverlayCloseClick();
+    }
+  };
+
+  //  функция закрытия окна превью по нажатии на Enter
+  var onOverlayCloseEnterPress = function (evt) {
+    if (evt.keyCode === window.ENTER_KEYCODE) {
+      onUploadOverlayCloseClick();
+    }
+  };
+
+  //  функция открытия окна превью
+  var onUploadFileChange = function () {
+    uploadOverlay.classList.remove('hidden');
+
+    //  закрываем по клику
+    uploadFormClose.addEventListener('click', onUploadOverlayCloseClick);
+    //  закрываем по нажатии на Escape
+    document.addEventListener('keydown', onOverlayCloseEscPress);
+    //  закрываем по нажатии на Enter, если крестик в фокусе
+    uploadFormClose.addEventListener('keydown', onOverlayCloseEnterPress);
+  };
+
+  //  закрытие окна превью
+  var onUploadOverlayCloseClick = function () {
+    uploadOverlay.classList.add('hidden');
+    uploadFile.value = '';
+
+    //  удаляем обработчики по закрытию окна
+    uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
+    document.removeEventListener('keydown', onOverlayCloseEscPress);
+    uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
+  };
+
+  //  показываем окно превью по изменению значения
+  uploadFile.addEventListener('change', onUploadFileChange);
+
+
   //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
   var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
   var decreaseButton = document.querySelector('.upload-resize-controls-button-dec');
@@ -45,31 +92,64 @@
   //  флаг
   var sliderPinIsDragged = false;
 
-  //  обработчик взаимодействия с ползунком
-  var onPinPositionSliderMouseup = function (evt) {
+  //  обработчик перетаскивания пина
+  var onPinPositionSliderMousemove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    window.sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
+
+    var shift = window.startCoordsX - moveEvt.clientX;
+
+    window.startCoordsX = moveEvt.clientX;
+
+
+    sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
+
+    //  не дает пину выйти за пределы шкалы
+    if (parseInt(sliderPin.style.left, 10) <= 0) {
+      sliderPin.style.left = 0 + 'px';
+    }
+    if (parseInt(sliderPin.style.left, 10) >= window.sliderWidth) {
+      sliderPin.style.left = window.sliderWidth + 'px';
+    }
+  };
+
+  //  обработчик отпускания пина
+  var onPinPositionSliderMouseup = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onPinPositionSliderMousemove);
+    document.removeEventListener('mouseup', onPinPositionSliderMouseup);
+
     var windowWidth = window.innerWidth;
-    var sliderWidth = document.querySelector('.upload-effect-level-line').clientWidth;
-    var pinPosition = evt.clientX;
 
     //  определяем положение ползунка на слайдере
-    var pinPositionOnSlider = pinPosition - ((windowWidth - sliderWidth) / 2);
+    var pinPositionOnSlider = window.startCoordsX - ((windowWidth - window.sliderWidth) / 2);
 
     sliderPinIsDragged = true;
     //  определяем пропорцию эффекта относительно положения ползунка
-    effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
+    effectLevel.value = (pinPositionOnSlider / window.sliderWidth).toFixed(2);
     filterFunctions[currentAppliedFilterFunction]();
   };
+
+  //  обработчик нажатия кнопки на пине
+  sliderPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    window.startCoordsX = evt.clientX;
+    //  обработчик пертаскивания пина
+    document.addEventListener('mousemove', onPinPositionSliderMousemove);
+    //  обработчик отпускания пина
+    document.addEventListener('mouseup', onPinPositionSliderMouseup);
+  });
 
   // проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
   var updateEffectLevelValue = function () {
     if (!sliderPinIsDragged) {
       effectLevel.value = 1;
+      sliderPin.style.left = '455px';
     }
     sliderPinIsDragged = false;
   };
-
-  //  обработчик на ползунке мыши
-  sliderPin.addEventListener('mouseup', onPinPositionSliderMouseup);
 
   //  создаем коллекцию кнопок, которые переключают эффекты
   var uploadEffectPreviewButtons = document.querySelectorAll('.upload-effect-preview');
@@ -212,6 +292,7 @@
   var uploadFormHashtagField = document.querySelector('.upload-form-hashtags');
   var hashtags = [];
 
+  //  обработчик поля ввода хэштегов
   uploadFormHashtagField.addEventListener('input', function (evt) {
     var target = evt.target;
     //  проверка наличия решетки в начале, проверка наличия пробела после хэштега
@@ -234,6 +315,7 @@
       return;
     }
 
+    //  валидация хэштегов: мин. длина, макс. длина, знак решетки, пробелы
     for (var i = 0; i < hashtags.length; i++) {
       if (hashtags[i].length < 3) {
         target.setCustomValidity('Минимальная длина хэштега - 3 знака. В строке не должно быть лишних пробелов.');
@@ -256,6 +338,19 @@
   var form = document.querySelector('#upload-select-image');
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
+  });
+
+  //  поле комментария
+  var commentField = document.querySelector('.upload-form-description');
+
+  //  не позволяет закрыть форму, если поле комментария в фокусе
+  commentField.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onOverlayCloseEscPress);
+
+    //  позволяет закрыть форму, когда поле комментария больше не в фокусе
+    commentField.addEventListener('blur', function () {
+      document.addEventListener('keydown', onOverlayCloseEscPress);
+    });
   });
 
 })();
