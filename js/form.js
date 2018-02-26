@@ -336,8 +336,8 @@
   });
 
   window.form = document.querySelector('#upload-select-image');
-  form.addEventListener('submit', function (evt) {
-    window.upload(new FormData(form), function (response) {
+  window.form.addEventListener('submit', function (evt) {
+    window.upload(new FormData(window.form), function () {
       //  закрываем форму
       onUploadOverlayCloseClick();
     });

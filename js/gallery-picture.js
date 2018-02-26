@@ -2,26 +2,8 @@
 //  picture.js --- модуль для отрисовки миниатюры
 
 (function () {
- /*
-  //  функция, которая генерирует массив с объектами. внутри объектов содержатся случайные значения
-  var getFriendPictures = function () {
-    //  массив, в котором содержатся объекты, описывающие параметры фотографий
-    var friendPictures = [];
-    //  цикл, который добавляет в массив необходимое количество объектов
-    for (var i = 0; i < 26; i++) {
-      friendPictures[i] =
-      {
-        url: 'photos/' + [i + 1] + '.jpg',
-        likes: window.data.getRandomLikeNumber(),
-        comments: window.data.getCommentsNumber(window.COMMENTS),
-      };
-    }
-    return friendPictures;
-  };
-  var friendPictures = getFriendPictures();
-*/
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
-  window.pictureList = document.querySelector('.pictures');
+  var pictureList = document.querySelector('.pictures');
 
   var renderImage = function (picture) {
     //  сохраняем в переменную шаблон
