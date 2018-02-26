@@ -31,7 +31,7 @@
   };
 
   //  показ окна галереи
-  var onAnyPictureClick = function (evt) {
+  window.onAnyPictureClick = function (evt) {
     evt.preventDefault();
     var clickedItem = evt.target;
     var itemStats = clickedItem.nextElementSibling.children;
@@ -51,14 +51,5 @@
     //  закрываем по клику на Escape
     document.addEventListener('keydown', onGalleryCloseEscPress);
   };
-
-  //  вешаем обработчик на каждую фотографию
-  var addListenersToPictureList = function () {
-    var images = document.querySelectorAll('img');
-    for (var i = 0; i < document.querySelector('.pictures').children.length; i++) {
-      images[i].addEventListener('click', onAnyPictureClick);
-    }
-  };
-  addListenersToPictureList();
 
 })();

@@ -335,8 +335,12 @@
     }
   });
 
-  var form = document.querySelector('#upload-select-image');
+  window.form = document.querySelector('#upload-select-image');
   form.addEventListener('submit', function (evt) {
+    window.upload(new FormData(form), function (response) {
+      //  закрываем форму
+      onUploadOverlayCloseClick();
+    });
     evt.preventDefault();
   });
 

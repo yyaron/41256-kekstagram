@@ -2,6 +2,7 @@
 //  picture.js --- модуль для отрисовки миниатюры
 
 (function () {
+ /*
   //  функция, которая генерирует массив с объектами. внутри объектов содержатся случайные значения
   var getFriendPictures = function () {
     //  массив, в котором содержатся объекты, описывающие параметры фотографий
@@ -18,9 +19,9 @@
     return friendPictures;
   };
   var friendPictures = getFriendPictures();
-
+*/
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
-  var pictureList = document.querySelector('.pictures');
+  window.pictureList = document.querySelector('.pictures');
 
   var renderImage = function (picture) {
     //  сохраняем в переменную шаблон
@@ -29,21 +30,24 @@
     var pictureElement = pictureTemplate.cloneNode(true);
     //  вставляем cгенерированную картинку из массива
     pictureElement.querySelector('img').src = picture.url;
+    //  вешаем обработчик на каждую фотографию
+    pictureElement.querySelector('img').addEventListener('click', window.onAnyPictureClick);
     //  вставляем рандомное число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
     //  вставляем рандомное число комментариев из массива
-    pictureElement.querySelector('.picture-comments').textContent = picture.comments;
+    pictureElement.querySelector('.picture-comments').textContent = window.data.getCommentsNumber(picture.comments);
 
     return pictureElement;
   };
 
-  //  создаем фрагмент
-  var fragment = document.createDocumentFragment();
-
-  //  и воспроизводим шаблоны с помощью фрагмента
-  for (var j = 0; j < friendPictures.length; j++) {
-    fragment.appendChild(renderImage(friendPictures[j]));
-  }
-  pictureList.appendChild(fragment);
+  window.download(function (pictures) {
+    //  создаем фрагмент
+    var fragment = document.createDocumentFragment();
+    //  и воспроизводим шаблоны с помощью фрагмента
+    for (var j = 0; j < pictures.length; j++) {
+      fragment.appendChild(renderImage(pictures[j]));
+    }
+    pictureList.appendChild(fragment);
+  });
 
 })();
