@@ -2,23 +2,6 @@
 //  picture.js --- модуль для отрисовки миниатюры
 
 (function () {
-  //  функция, которая генерирует массив с объектами. внутри объектов содержатся случайные значения
-  var getFriendPictures = function () {
-    //  массив, в котором содержатся объекты, описывающие параметры фотографий
-    var friendPictures = [];
-    //  цикл, который добавляет в массив необходимое количество объектов
-    for (var i = 0; i < 26; i++) {
-      friendPictures[i] =
-      {
-        url: 'photos/' + [i + 1] + '.jpg',
-        likes: window.data.getRandomLikeNumber(),
-        comments: window.data.getCommentsNumber(window.COMMENTS),
-      };
-    }
-    return friendPictures;
-  };
-  var friendPictures = getFriendPictures();
-
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
 
@@ -29,21 +12,37 @@
     var pictureElement = pictureTemplate.cloneNode(true);
     //  вставляем cгенерированную картинку из массива
     pictureElement.querySelector('img').src = picture.url;
+    //  вешаем обработчик на каждую фотографию
+    pictureElement.querySelector('img').addEventListener('click', window.onAnyPictureClick);
     //  вставляем рандомное число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
     //  вставляем рандомное число комментариев из массива
-    pictureElement.querySelector('.picture-comments').textContent = picture.comments;
+    pictureElement.querySelector('.picture-comments').textContent = window.data.getCommentsNumber(picture.comments);
 
     return pictureElement;
   };
 
-  //  создаем фрагмент
-  var fragment = document.createDocumentFragment();
+  var loadPictures = function (pictures) {
+    //  создаем фрагмент
+    var fragment = document.createDocumentFragment();
+    //  и воспроизводим шаблоны с помощью фрагмента
+    for (var j = 0; j < pictures.length; j++) {
+      fragment.appendChild(renderImage(pictures[j]));
+    }
+    pictureList.appendChild(fragment);
+  };
 
-  //  и воспроизводим шаблоны с помощью фрагмента
-  for (var j = 0; j < friendPictures.length; j++) {
-    fragment.appendChild(renderImage(friendPictures[j]));
-  }
-  pictureList.appendChild(fragment);
+  window.showAlertMessage = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+
+    setTimeout(function () {
+      node.parentNode.removeChild(node);
+    }, 3000);
+  };
+
+  window.download(loadPictures, window.showAlertMessage);
 
 })();

@@ -791,6 +791,21 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   background-position-x: -18px;
 }
 
+.error-message {
+  z-index: 100;
+  margin: 0 auto;
+  padding: 25px;
+  text-align: center;
+  background-color: yellow;
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: 30px;
+  color: black;
+  font-weight: bold;
+  border: 10px solid black;
+}
+
 .footer {
   position: absolute;
   right: 10px;
