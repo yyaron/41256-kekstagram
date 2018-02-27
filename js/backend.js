@@ -2,8 +2,6 @@
 //  backend.js экспортирует в глобальную область видимости функции
 //  для взаимодействия с удалённым севером через XHR
 
-
-
 //  загрузка данных с сервера
 window.download = function (onLoad, onError) {
   var xhr = new XMLHttpRequest();
@@ -18,10 +16,10 @@ window.download = function (onLoad, onError) {
   });
 
   xhr.addEventListener('error', function () {
-      onError('Ошибка соединения');
+    onError('Ошибка соединения');
   });
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
   });
 
   xhr.timeout = 10000;
@@ -44,10 +42,11 @@ window.upload = function (data, onLoad, onError) {
   });
 
   xhr.addEventListener('error', function () {
-      onError('Ошибка соединения');
+    onError('Ошибка соединения');
   });
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+
+  xhr.addEventListener('timeout', function () {
+    onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
   });
 
   xhr.timeout = 10000;
