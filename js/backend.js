@@ -18,7 +18,8 @@ window.download = function (onLoad, onError) {
   xhr.addEventListener('error', function () {
     onError('Ошибка соединения');
   });
-    xhr.addEventListener('timeout', function () {
+
+  xhr.addEventListener('timeout', function () {
     onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
   });
 
