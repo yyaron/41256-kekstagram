@@ -22,7 +22,7 @@
     return pictureElement;
   };
 
-  window.download(function (pictures) {
+  var loadPictures = function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
@@ -30,6 +30,19 @@
       fragment.appendChild(renderImage(pictures[j]));
     }
     pictureList.appendChild(fragment);
-  });
+  };
+
+  window.showAlertMessage = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+
+    setTimeout(function() {
+      node.parentNode.removeChild(node);
+    }, 3000);
+  };
+
+  window.download(loadPictures, window.showAlertMessage);
 
 })();

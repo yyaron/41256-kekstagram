@@ -36,13 +36,18 @@
 
   //  закрытие окна превью
   var onUploadOverlayCloseClick = function () {
-    uploadOverlay.classList.add('hidden');
+    closeForm();
     uploadFile.value = '';
 
     //  удаляем обработчики по закрытию окна
     uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
     document.removeEventListener('keydown', onOverlayCloseEscPress);
     uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
+  };
+
+  var closeForm = function () {
+    uploadOverlay.classList.add('hidden');
+    window.form.reset();
   };
 
   //  показываем окно превью по изменению значения
@@ -336,12 +341,10 @@
   });
 
   window.form = document.querySelector('#upload-select-image');
+
   window.form.addEventListener('submit', function (evt) {
-    window.upload(new FormData(window.form), function () {
-      //  закрываем форму
-      onUploadOverlayCloseClick();
-    });
     evt.preventDefault();
+    window.upload(new FormData(window.form), closeForm, window.showAlertMessage);
   });
 
   //  поле комментария
