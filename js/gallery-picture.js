@@ -9,8 +9,9 @@
   var showFilters = function () {
     var filtersBar = document.querySelector('.filters');
 
-    if (filtersBar.classList.contains('filters-inactive'))
+    if (filtersBar.classList.contains('filters-inactive')) {
       filtersBar.classList.remove('filters-inactive');
+    }
   };
 
   var renderImage = function (picture) {
@@ -67,7 +68,7 @@
 
   var loadRecommendedPictures = function () {
     uncheckOtherFilterInputs(recommendedFilter);
-    window.download(loadPictures, window.showAlertMessage)
+    window.download(loadPictures, window.showAlertMessage);
   };
 
   recommendedFilter.addEventListener('click', loadRecommendedPictures);
@@ -95,7 +96,7 @@
   };
 
   popularFilter.addEventListener('click', function () {
-     window.download(loadPopularPictures, window.showAlertMessage);
+    window.download(loadPopularPictures, window.showAlertMessage);
   });
 
 })();
