@@ -40,7 +40,6 @@
     pictureList.innerHTML = '';
     pictureList.appendChild(fragment);
 
-    console.log('done loading pictures');
     showFilters();
   };
 
@@ -58,7 +57,7 @@
   //  загружаем картинки
   window.download(loadPictures, window.showAlertMessage);
 
-  var uncheckAllFilterInputs = function (currentInput) {
+  var uncheckOtherFilterInputs = function (currentInput) {
     document.querySelectorAll('input[name="filter"]').checked = false;
     currentInput.checked = true;
   };
@@ -72,8 +71,8 @@
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
 
-  var loadPopularPictures = function (pictures) {
-    uncheckAllFilterInputs(popularFilter);
+  var loadPopularPictures = function (pictures) { //  <--- получится сделать из неё общую функцию для лайков и комментов?
+    uncheckOtherFilterInputs(popularFilter);
 
     //  сортируем массив с лайками по убыванию
     var popularPictures = pictures.sort(function (first, second) {
@@ -93,10 +92,5 @@
   popularFilter.addEventListener('click', function () {
      window.download(loadPopularPictures, window.showAlertMessage);
   });
-
-  //  фотографии, отсортированные в порядке убывания количества комментариев.
-  //  var discussedFilter = document.querySelectorAll('.filters-item')[2];
-
-  //  var randomFilter = document.querySelectorAll('.filters-item')[3];
 
 })();
