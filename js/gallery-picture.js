@@ -64,14 +64,18 @@
 
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
-  recommendedFilter.addEventListener('click', function () {
+
+  var loadRecommendedPictures = function () {
+    uncheckOtherFilterInputs(recommendedFilter);
     window.download(loadPictures, window.showAlertMessage)
-  });
+  };
+
+  recommendedFilter.addEventListener('click', loadRecommendedPictures);
 
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
 
-  var loadPopularPictures = function (pictures) { //  <--- получится сделать из неё общую функцию для лайков и комментов?
+  var loadPopularPictures = function (pictures) {
     uncheckOtherFilterInputs(popularFilter);
 
     //  сортируем массив с лайками по убыванию
@@ -85,7 +89,8 @@
       }
     });
 
-    //  передаем отсортированный массив в функцию отрисовки сетки фотографий на странице
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
     loadPictures(popularPictures);
   };
 
