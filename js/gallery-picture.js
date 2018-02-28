@@ -26,12 +26,12 @@
     //  вставляем рандомное число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
     //  вставляем рандомное число комментариев из массива
-    pictureElement.querySelector('.picture-comments').textContent = window.data.getCommentsNumber(picture.comments);
+    pictureElement.querySelector('.picture-comments').textContent = picture.comments.length;
 
     return pictureElement;
   };
 
-  var loadPictures = function (pictures) {
+  var loadPicturesOnPage = function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
@@ -55,20 +55,27 @@
     }, 3000);
   };
 
-  //  загружаем картинки
-  window.download(loadPictures, window.showAlertMessage);
-
   var uncheckOtherFilterInputs = function (currentInput) {
     document.querySelectorAll('input[name="filter"]').checked = false;
     currentInput.checked = true;
   };
 
+
+  var getDownloadedPictures = function (pictures) {
+    window.downloadedPictures = pictures;
+    loadPicturesOnPage(pictures);
+  };
+
+  //  загружаем картинки
+  window.download(getDownloadedPictures, window.showAlertMessage);
+
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
 
-  var loadRecommendedPictures = function () {
+  var loadRecommendedPictures = function (pictures) {
     uncheckOtherFilterInputs(recommendedFilter);
-    window.download(loadPictures, window.showAlertMessage);
+
+    loadPicturesOnPage(window.downloadedPictures);
   };
 
   recommendedFilter.addEventListener('click', loadRecommendedPictures);
@@ -76,11 +83,13 @@
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
 
-  var loadPopularPictures = function (pictures) {
+  var loadPopularPictures = function () {
     uncheckOtherFilterInputs(popularFilter);
 
+    var popularPictures = window.downloadedPictures.slice(0);
+
     //  сортируем массив с лайками по убыванию
-    var popularPictures = pictures.sort(function (first, second) {
+    popularPictures.sort(function (first, second) {
       if (first.likes > second.likes) {
         return -1;
       } else if (first.likes < second.likes) {
@@ -92,11 +101,62 @@
 
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
-    loadPictures(popularPictures);
+    loadPicturesOnPage(popularPictures);
   };
 
-  popularFilter.addEventListener('click', function () {
-    window.download(loadPopularPictures, window.showAlertMessage);
-  });
+  popularFilter.addEventListener('click', loadPopularPictures);
+
+//  фотографии, отсортированные в порядке убывания количества комментариев
+  var discussedFilter = document.querySelector('#filter-discussed');
+
+  var loadDiscussedPictures = function () {
+    uncheckOtherFilterInputs(discussedFilter);
+
+    var discussedPictures = window.downloadedPictures.slice(0);
+
+    //  сортируем массив с комментами по убыванию
+    discussedPictures.sort(function (first, second) {
+      if (first.comments.length > second.comments.length) {
+        return -1;
+      } else if (first.comments.length < second.comments.length) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
+    loadPicturesOnPage(discussedPictures);
+  };
+
+  discussedFilter.addEventListener('click', loadDiscussedPictures);
+
+//  фотографии, отсортированные в случайном порядке
+  var randomFilter = document.querySelector('#filter-random');
+
+  var loadRandomPictures = function () {
+    uncheckOtherFilterInputs(randomFilter);
+    var randomPictures = window.downloadedPictures.slice(0);
+
+    var shuffleArray = function (array) {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+
+      while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+      return array;
+    };
+
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
+    loadPicturesOnPage(shuffleArray(randomPictures));
+  };
+
+  randomFilter.addEventListener('click', loadRandomPictures);
 
 })();
