@@ -5,6 +5,14 @@
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
 
+  //  показываем фильтры
+  var showFilters = function () {
+    var filtersBar = document.querySelector('.filters');
+
+    if (filtersBar.classList.contains('filters-inactive'))
+      filtersBar.classList.remove('filters-inactive');
+  };
+
   var renderImage = function (picture) {
     //  сохраняем в переменную шаблон
     var pictureTemplate = document.querySelector('#picture-template').content;
@@ -29,7 +37,11 @@
     for (var j = 0; j < pictures.length; j++) {
       fragment.appendChild(renderImage(pictures[j]));
     }
+    pictureList.innerHTML = '';
     pictureList.appendChild(fragment);
+
+    console.log('done loading pictures');
+    showFilters();
   };
 
   window.showAlertMessage = function (errorMessage) {
@@ -43,6 +55,48 @@
     }, 3000);
   };
 
+  //  загружаем картинки
   window.download(loadPictures, window.showAlertMessage);
+
+  var uncheckAllFilterInputs = function (currentInput) {
+    document.querySelectorAll('input[name="filter"]').checked = false;
+    currentInput.checked = true;
+  };
+
+  //  фотографии в том порядке, в котором они были загружены с сервера
+  var recommendedFilter = document.querySelector('#filter-recommend');
+  recommendedFilter.addEventListener('click', function () {
+    window.download(loadPictures, window.showAlertMessage)
+  });
+
+  //  фотографии, отсортированные в порядке убывания количества лайков
+  var popularFilter = document.querySelector('#filter-popular');
+
+  var loadPopularPictures = function (pictures) {
+    uncheckAllFilterInputs(popularFilter);
+
+    //  сортируем массив с лайками по убыванию
+    var popularPictures = pictures.sort(function (first, second) {
+      if (first.likes > second.likes) {
+        return -1;
+      } else if (first.likes < second.likes) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    //  передаем отсортированный массив в функцию отрисовки сетки фотографий на странице
+    loadPictures(popularPictures);
+  };
+
+  popularFilter.addEventListener('click', function () {
+     window.download(loadPopularPictures, window.showAlertMessage);
+  });
+
+  //  фотографии, отсортированные в порядке убывания количества комментариев.
+  //  var discussedFilter = document.querySelectorAll('.filters-item')[2];
+
+  //  var randomFilter = document.querySelectorAll('.filters-item')[3];
 
 })();
