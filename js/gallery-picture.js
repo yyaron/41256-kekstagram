@@ -72,7 +72,7 @@
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
 
-  var loadRecommendedPictures = function (pictures) {
+  var loadRecommendedPictures = function () {
     uncheckOtherFilterInputs(recommendedFilter);
 
     loadPicturesOnPage(window.downloadedPictures);
@@ -106,7 +106,7 @@
 
   popularFilter.addEventListener('click', loadPopularPictures);
 
-//  фотографии, отсортированные в порядке убывания количества комментариев
+  //  фотографии, отсортированные в порядке убывания количества комментариев
   var discussedFilter = document.querySelector('#filter-discussed');
 
   var loadDiscussedPictures = function () {
@@ -132,7 +132,7 @@
 
   discussedFilter.addEventListener('click', loadDiscussedPictures);
 
-//  фотографии, отсортированные в случайном порядке
+  //  фотографии, отсортированные в случайном порядке
   var randomFilter = document.querySelector('#filter-random');
 
   var loadRandomPictures = function () {
@@ -140,9 +140,11 @@
     var randomPictures = window.downloadedPictures.slice(0);
 
     var shuffleArray = function (array) {
-      var currentIndex = array.length, temporaryValue, randomIndex;
+      var currentIndex = array.length;
+      var temporaryValue = currentIndex;
+      var randomIndex = currentIndex;
 
-      while (0 !== currentIndex) {
+      while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
         temporaryValue = array[currentIndex];
