@@ -2,6 +2,11 @@
 //  form.js --- модуль, который работает с формой редактирования изображения
 
 (function () {
+  var MIN_SCALE = 25;
+  var MAX_SCALE = 100;
+  var SCALE_STEP = 25;
+  var MIN_LEFT_POSITION = 0;
+
   //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
   var uploadFile = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.upload-overlay');
@@ -9,14 +14,14 @@
 
   //  функция закрытия окна превью по нажатии на Escape
   var onOverlayCloseEscPress = function (evt) {
-    if (evt.keyCode === window.data.ESC_KEYCODE) {
+    if (evt.keyCode === window.keys.ESC_KEYCODE) {
       onUploadOverlayCloseClick();
     }
   };
 
   //  функция закрытия окна превью по нажатии на Enter
   var onOverlayCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.data.ENTER_KEYCODE) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
       onUploadOverlayCloseClick();
     }
   };
@@ -66,16 +71,16 @@
 
   //  увеличение масштаба фото
   var onIncreaseButtonClick = function () {
-    if (parseInt(sizeValue.value, 10) < 100) {
-      sizeValue.value = parseInt(sizeValue.value, 10) + 25;
+    if (parseInt(sizeValue.value, 10) < MAX_SCALE) {
+      sizeValue.value = parseInt(sizeValue.value, 10) + SCALE_STEP;
       calculateScale();
     }
   };
 
   //  уменьшение масштаба фото
   var onDecreaseButtonClick = function () {
-    if (parseInt(sizeValue.value, 10) > 25) {
-      sizeValue.value = parseInt(sizeValue.value, 10) - 25;
+    if (parseInt(sizeValue.value, 10) > MIN_SCALE) {
+      sizeValue.value = parseInt(sizeValue.value, 10) - SCALE_STEP;
       calculateScale();
     }
   };
@@ -90,32 +95,36 @@
   var sliderPin = document.querySelector('.upload-effect-level-pin');
   var effectLevel = document.querySelector('.upload-effect-level-value');
 
-  var currentAppliedFilterFunction;
-
   //  флаг
   var sliderPinIsDragged = false;
 
+
+  var sliderWidth;
+  var startCoordsX;
   //  обработчик перетаскивания пина
   var onPinPositionSliderMousemove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    window.sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
+    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
 
-    var shift = window.startCoordsX - moveEvt.clientX;
+    var shift = startCoordsX - moveEvt.clientX;
 
-    window.startCoordsX = moveEvt.clientX;
+    startCoordsX = moveEvt.clientX;
 
 
     sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
 
     //  не дает пину выйти за пределы шкалы
-    if (parseInt(sliderPin.style.left, 10) <= 0) {
+    if (parseInt(sliderPin.style.left, 10) <= MIN_LEFT_POSITION) {
       sliderPin.style.left = 0 + 'px';
     }
-    if (parseInt(sliderPin.style.left, 10) >= window.sliderWidth) {
-      sliderPin.style.left = window.sliderWidth + 'px';
+    if (parseInt(sliderPin.style.left, 10) >= sliderWidth) {
+      sliderPin.style.left = sliderWidth + 'px';
     }
   };
+
+  var currentAppliedFilterFunction;
+  var currentAppliedCssClass;
 
   //  обработчик отпускания пина
   var onPinPositionSliderMouseup = function (upEvt) {
@@ -126,11 +135,11 @@
     var windowWidth = window.innerWidth;
 
     //  определяем положение ползунка на слайдере
-    var pinPositionOnSlider = window.startCoordsX - ((windowWidth - window.sliderWidth) / 2);
+    var pinPositionOnSlider = startCoordsX - ((windowWidth - sliderWidth) / 2);
 
     sliderPinIsDragged = true;
     //  определяем пропорцию эффекта относительно положения ползунка
-    effectLevel.value = (pinPositionOnSlider / window.sliderWidth).toFixed(2);
+    effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
     filterFunctions[currentAppliedFilterFunction]();
   };
 
@@ -138,7 +147,7 @@
   sliderPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    window.startCoordsX = evt.clientX;
+    startCoordsX = evt.clientX;
     //  обработчик пертаскивания пина
     document.addEventListener('mousemove', onPinPositionSliderMousemove);
     //  обработчик отпускания пина
@@ -179,16 +188,22 @@
 
   //  объект с фильтрами
   var filterFunctions = {
-    //  сбрасывает остальные эффекты
-    clearLastEffect: function () {
-      imagePreview.classList.remove('upload-effect-chrome', 'upload-effect-sepia', 'upload-effect-marvin', 'upload-effect-fobos', 'upload-effect-heat');
+    //  сбрасывает остальные классы
+    onAnyEffectClick: function (currentClass) {
+      updateEffectLevelValue();
+
+      var clearLastCssClass = function (currentClass) {
+        imagePreview.classList.remove(currentAppliedCssClass);
+        currentAppliedCssClass = currentClass;
+        imagePreview.classList.add(currentAppliedCssClass);
+      };
+      clearLastCssClass(currentClass);
     },
 
     //  переключает на оригинал
     onEffectNoneButtonClick: function () {
-      filterFunctions.clearLastEffect();
       hideUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('');
 
       currentAppliedFilterFunction = 'onEffectNoneButtonClick';
       imagePreview.style.filter = '';
@@ -196,57 +211,46 @@
 
     //  переключает на "хром"
     onEffectChromeButtonClick: function () {
-      filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('upload-effect-chrome');
 
       currentAppliedFilterFunction = 'onEffectChromeButtonClick';
-      imagePreview.classList.add('upload-effect-chrome');
-      document.querySelector('.upload-effect-chrome').style.filter = 'grayscale(' + effectLevel.value + ')';
+      imagePreview.style.filter = 'grayscale(' + effectLevel.value + ')';
     },
 
     //  переключает на "сепию"
     onEffectSepiaButtonClick: function () {
-      filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('upload-effect-sepia');
 
       currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
-      imagePreview.classList.add('upload-effect-sepia');
-      document.querySelector('.upload-effect-sepia').style.filter = 'sepia(' + effectLevel.value + ')';
+      imagePreview.style.filter = 'sepia(' + effectLevel.value + ')';
     },
 
     //  переключает на "марвин"
     onEffectMarvinButtonClick: function () {
-      filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('upload-effect-marvin');
 
       currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
-      imagePreview.classList.add('upload-effect-marvin');
-      document.querySelector('.upload-effect-marvin').style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
+      imagePreview.style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
     },
 
     //  переключает на "фобос"
     onEffectFobosButtonClick: function () {
-      filterFunctions.clearLastEffect();
       showUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('upload-effect-fobos');
 
       currentAppliedFilterFunction = 'onEffectFobosButtonClick';
-      imagePreview.classList.add('upload-effect-fobos');
-      document.querySelector('.upload-effect-fobos').style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
+      imagePreview.style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
     },
 
     //  переключает на "зной"
     onEffectHeatButtonClick: function () {
-      filterFunctions.clearLastEffect();
-      showUploadEffectControls();
-      updateEffectLevelValue();
+      filterFunctions.onAnyEffectClick('upload-effect-heat');
 
       currentAppliedFilterFunction = 'onEffectHeatButtonClick';
-      imagePreview.classList.add('upload-effect-heat');
-      document.querySelector('.upload-effect-heat').style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
+      imagePreview.style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
     }
   };
 

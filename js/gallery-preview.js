@@ -8,14 +8,14 @@
 
   //  закрытие окна галереи по нажатии на Enter
   var onGalleryCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.data.ENTER_KEYCODE) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
       onGalleryCloseClick();
     }
   };
 
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
-    if (evt.keyCode === window.data.ESC_KEYCODE) {
+    if (evt.keyCode === window.keys.ESC_KEYCODE) {
       onGalleryCloseClick();
     }
   };

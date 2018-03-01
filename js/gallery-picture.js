@@ -44,22 +44,13 @@
     showFilters();
   };
 
-  window.showAlertMessage = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-
-    setTimeout(function () {
-      node.parentNode.removeChild(node);
-    }, 3000);
-  };
-
-  var uncheckOtherFilterInputs = function (currentInput) {
-    document.querySelectorAll('input[name="filter"]').checked = false;
+var uncheckOtherFilterInputs = function (currentInput) {
+    var filterInputs = document.querySelectorAll('input[name="filter"]');
+    for (var i = 0; i < filterInputs.length; i++) {
+      filterInputs[i].checked = false;
+    };
     currentInput.checked = true;
   };
-
 
   var onLoadPictures = function (pictures) {
     window.downloadedPictures = pictures;
