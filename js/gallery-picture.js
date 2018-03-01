@@ -31,7 +31,7 @@
     return pictureElement;
   };
 
-  var renderPicturesOnPage = window.debounce(function (pictures) {
+  var renderPicturesOnPage = function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
@@ -42,7 +42,7 @@
     pictureList.appendChild(fragment);
 
     showFilters();
-  }, 500);
+  };
 
   window.showAlertMessage = function (errorMessage) {
     var node = document.createElement('div');
@@ -78,7 +78,7 @@
     renderPicturesOnPage(window.downloadedPictures);
   };
 
-  recommendedFilter.addEventListener('click', loadRecommendedPictures);
+  recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
 
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
@@ -98,13 +98,12 @@
         return 0;
       }
     });
-
     //  передаем отсортированный массив
-    //  в функцию отрисовки сетки фотографий на странице
+    //  в функцию отрисовки фотографий на странице
     renderPicturesOnPage(popularPictures);
   };
 
-  popularFilter.addEventListener('click', loadPopularPictures);
+  popularFilter.addEventListener('click', window.debounce(loadPopularPictures, 500));
 
   //  фотографии, отсортированные в порядке убывания количества комментариев
   var discussedFilter = document.querySelector('#filter-discussed');
@@ -124,13 +123,12 @@
         return 0;
       }
     });
-
     //  передаем отсортированный массив
-    //  в функцию отрисовки сетки фотографий на странице
+    //  в функцию отрисовки фотографий на странице
     renderPicturesOnPage(discussedPictures);
   };
 
-  discussedFilter.addEventListener('click', loadDiscussedPictures);
+  discussedFilter.addEventListener('click', window.debounce(loadDiscussedPictures, 500));
 
   //  фотографии, отсортированные в случайном порядке
   var randomFilter = document.querySelector('#filter-random');
@@ -138,7 +136,7 @@
   var loadRandomPictures = function () {
     uncheckOtherFilterInputs(randomFilter);
     var randomPictures = window.downloadedPictures.slice(0);
-
+    //  перемешиваем данные массива в случайном порядке
     var shuffleArray = function (array) {
       var currentIndex = array.length;
       var temporaryValue = currentIndex;
@@ -153,12 +151,11 @@
       }
       return array;
     };
-
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
     renderPicturesOnPage(shuffleArray(randomPictures));
   };
 
-  randomFilter.addEventListener('click', loadRandomPictures);
+  randomFilter.addEventListener('click', window.debounce(loadRandomPictures, 500));
 
 })();

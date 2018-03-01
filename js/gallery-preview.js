@@ -2,26 +2,25 @@
 //  preview.js --- модуль для отрисовки увеличенного изображения
 
 (function () {
-
   //  окно галереи, кнопка закрытия окна
   var gallery = document.querySelector('.gallery-overlay');
   var galleryCloseIcon = gallery.querySelector('.gallery-overlay-close');
 
   //  закрытие окна галереи по нажатии на Enter
   var onGalleryCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.ENTER_KEYCODE) {
+    if (evt.keyCode === window.data.ENTER_KEYCODE) {
       onGalleryCloseClick();
     }
   };
 
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
-    if (evt.keyCode === window.ESC_KEYCODE) {
+    if (evt.keyCode === window.data.ESC_KEYCODE) {
       onGalleryCloseClick();
     }
   };
 
-  //  закрытие окна галереи и удаление ненужный обработчиков
+  //  закрытие окна галереи и удаление ненужных обработчиков
   var onGalleryCloseClick = function () {
     gallery.classList.add('hidden');
 

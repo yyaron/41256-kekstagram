@@ -2,7 +2,6 @@
 //  form.js --- модуль, который работает с формой редактирования изображения
 
 (function () {
-
   //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
   var uploadFile = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.upload-overlay');
@@ -10,14 +9,14 @@
 
   //  функция закрытия окна превью по нажатии на Escape
   var onOverlayCloseEscPress = function (evt) {
-    if (evt.keyCode === window.ESC_KEYCODE) {
+    if (evt.keyCode === window.data.ESC_KEYCODE) {
       onUploadOverlayCloseClick();
     }
   };
 
   //  функция закрытия окна превью по нажатии на Enter
   var onOverlayCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.ENTER_KEYCODE) {
+    if (evt.keyCode === window.data.ENTER_KEYCODE) {
       onUploadOverlayCloseClick();
     }
   };
@@ -52,7 +51,6 @@
 
   //  показываем окно превью по изменению значения
   uploadFile.addEventListener('change', onUploadFileChange);
-
 
   //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
   var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
@@ -342,6 +340,7 @@
 
   window.form = document.querySelector('#upload-select-image');
 
+  //  отправляем данные формы через xhr
   window.form.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.upload(new FormData(window.form), closeForm, window.showAlertMessage);
