@@ -194,7 +194,7 @@
 
       var clearLastCssClass = function (cssClass) {
         imagePreview.classList.remove(currentAppliedCssClass);
-        currentAppliedCssClass = currentClass;
+        currentAppliedCssClass = cssClass;
         imagePreview.classList.add(currentAppliedCssClass);
       };
       clearLastCssClass(cssClass);
