@@ -189,15 +189,15 @@
   //  объект с фильтрами
   var filterFunctions = {
     //  сбрасывает остальные классы
-    onAnyEffectClick: function (currentClass) {
+    onAnyEffectClick: function (cssClass) {
       updateEffectLevelValue();
 
-      var clearLastCssClass = function (currentClass) {
+      var clearLastCssClass = function (cssClass) {
         imagePreview.classList.remove(currentAppliedCssClass);
         currentAppliedCssClass = currentClass;
         imagePreview.classList.add(currentAppliedCssClass);
       };
-      clearLastCssClass(currentClass);
+      clearLastCssClass(cssClass);
     },
 
     //  переключает на оригинал

@@ -44,11 +44,11 @@
     showFilters();
   };
 
-var uncheckOtherFilterInputs = function (currentInput) {
+  var uncheckOtherFilterInputs = function (currentInput) {
     var filterInputs = document.querySelectorAll('input[name="filter"]');
     for (var i = 0; i < filterInputs.length; i++) {
       filterInputs[i].checked = false;
-    };
+    }
     currentInput.checked = true;
   };
 
