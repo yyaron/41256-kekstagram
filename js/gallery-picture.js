@@ -31,7 +31,7 @@
     return pictureElement;
   };
 
-  var loadPicturesOnPage = function (pictures) {
+  var renderPicturesOnPage = window.debounce(function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
@@ -42,7 +42,7 @@
     pictureList.appendChild(fragment);
 
     showFilters();
-  };
+  }, 500);
 
   window.showAlertMessage = function (errorMessage) {
     var node = document.createElement('div');
@@ -61,13 +61,13 @@
   };
 
 
-  var getDownloadedPictures = function (pictures) {
+  var onLoadPictures = function (pictures) {
     window.downloadedPictures = pictures;
-    loadPicturesOnPage(pictures);
+    renderPicturesOnPage(pictures);
   };
 
   //  загружаем картинки
-  window.download(getDownloadedPictures, window.showAlertMessage);
+  window.download(onLoadPictures, window.showAlertMessage);
 
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
@@ -75,7 +75,7 @@
   var loadRecommendedPictures = function () {
     uncheckOtherFilterInputs(recommendedFilter);
 
-    loadPicturesOnPage(window.downloadedPictures);
+    renderPicturesOnPage(window.downloadedPictures);
   };
 
   recommendedFilter.addEventListener('click', loadRecommendedPictures);
@@ -101,7 +101,7 @@
 
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
-    loadPicturesOnPage(popularPictures);
+    renderPicturesOnPage(popularPictures);
   };
 
   popularFilter.addEventListener('click', loadPopularPictures);
@@ -127,7 +127,7 @@
 
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
-    loadPicturesOnPage(discussedPictures);
+    renderPicturesOnPage(discussedPictures);
   };
 
   discussedFilter.addEventListener('click', loadDiscussedPictures);
@@ -156,7 +156,7 @@
 
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
-    loadPicturesOnPage(shuffleArray(randomPictures));
+    renderPicturesOnPage(shuffleArray(randomPictures));
   };
 
   randomFilter.addEventListener('click', loadRandomPictures);
