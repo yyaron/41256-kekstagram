@@ -5,6 +5,15 @@
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
 
+  //  показываем фильтры
+  var showFilters = function () {
+    var filtersBar = document.querySelector('.filters');
+
+    if (filtersBar.classList.contains('filters-inactive')) {
+      filtersBar.classList.remove('filters-inactive');
+    }
+  };
+
   var renderImage = function (picture) {
     //  сохраняем в переменную шаблон
     var pictureTemplate = document.querySelector('#picture-template').content;
@@ -17,20 +26,23 @@
     //  вставляем рандомное число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
     //  вставляем рандомное число комментариев из массива
-    pictureElement.querySelector('.picture-comments').textContent = window.data.getCommentsNumber(picture.comments);
+    pictureElement.querySelector('.picture-comments').textContent = picture.comments.length;
 
     return pictureElement;
   };
 
-  var loadPictures = function (pictures) {
+  var renderPicturesOnPage = window.debounce(function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
     for (var j = 0; j < pictures.length; j++) {
       fragment.appendChild(renderImage(pictures[j]));
     }
+    pictureList.innerHTML = '';
     pictureList.appendChild(fragment);
-  };
+
+    showFilters();
+  }, 500);
 
   window.showAlertMessage = function (errorMessage) {
     var node = document.createElement('div');
@@ -43,6 +55,110 @@
     }, 3000);
   };
 
-  window.download(loadPictures, window.showAlertMessage);
+  var uncheckOtherFilterInputs = function (currentInput) {
+    document.querySelectorAll('input[name="filter"]').checked = false;
+    currentInput.checked = true;
+  };
+
+
+  var onLoadPictures = function (pictures) {
+    window.downloadedPictures = pictures;
+    renderPicturesOnPage(pictures);
+  };
+
+  //  загружаем картинки
+  window.download(onLoadPictures, window.showAlertMessage);
+
+  //  фотографии в том порядке, в котором они были загружены с сервера
+  var recommendedFilter = document.querySelector('#filter-recommend');
+
+  var loadRecommendedPictures = function () {
+    uncheckOtherFilterInputs(recommendedFilter);
+
+    renderPicturesOnPage(window.downloadedPictures);
+  };
+
+  recommendedFilter.addEventListener('click', loadRecommendedPictures);
+
+  //  фотографии, отсортированные в порядке убывания количества лайков
+  var popularFilter = document.querySelector('#filter-popular');
+
+  var loadPopularPictures = function () {
+    uncheckOtherFilterInputs(popularFilter);
+
+    var popularPictures = window.downloadedPictures.slice(0);
+
+    //  сортируем массив с лайками по убыванию
+    popularPictures.sort(function (first, second) {
+      if (first.likes > second.likes) {
+        return -1;
+      } else if (first.likes < second.likes) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
+    renderPicturesOnPage(popularPictures);
+  };
+
+  popularFilter.addEventListener('click', loadPopularPictures);
+
+  //  фотографии, отсортированные в порядке убывания количества комментариев
+  var discussedFilter = document.querySelector('#filter-discussed');
+
+  var loadDiscussedPictures = function () {
+    uncheckOtherFilterInputs(discussedFilter);
+
+    var discussedPictures = window.downloadedPictures.slice(0);
+
+    //  сортируем массив с комментами по убыванию
+    discussedPictures.sort(function (first, second) {
+      if (first.comments.length > second.comments.length) {
+        return -1;
+      } else if (first.comments.length < second.comments.length) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
+    renderPicturesOnPage(discussedPictures);
+  };
+
+  discussedFilter.addEventListener('click', loadDiscussedPictures);
+
+  //  фотографии, отсортированные в случайном порядке
+  var randomFilter = document.querySelector('#filter-random');
+
+  var loadRandomPictures = function () {
+    uncheckOtherFilterInputs(randomFilter);
+    var randomPictures = window.downloadedPictures.slice(0);
+
+    var shuffleArray = function (array) {
+      var currentIndex = array.length;
+      var temporaryValue = currentIndex;
+      var randomIndex = currentIndex;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+      return array;
+    };
+
+    //  передаем отсортированный массив
+    //  в функцию отрисовки сетки фотографий на странице
+    renderPicturesOnPage(shuffleArray(randomPictures));
+  };
+
+  randomFilter.addEventListener('click', loadRandomPictures);
 
 })();
