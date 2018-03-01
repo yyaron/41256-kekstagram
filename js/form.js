@@ -192,7 +192,7 @@
     onAnyEffectClick: function (cssClass) {
       updateEffectLevelValue();
 
-      var clearLastCssClass = function (cssClass) {
+      var clearLastCssClass = function () {
         imagePreview.classList.remove(currentAppliedCssClass);
         currentAppliedCssClass = cssClass;
         imagePreview.classList.add(currentAppliedCssClass);
