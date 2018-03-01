@@ -2,14 +2,13 @@
 
 window.debounce = (function (func, wait, immediate) {
   var timeout;
-  return function() {
-    var context = this;
+  return function () {
     var args = arguments;
 
-    var later = function() {
+    var later = function () {
       timeout = null;
       if (!immediate) {
-        func.apply(context, args);
+        func.apply(this, args);
       }
     };
 
@@ -18,7 +17,7 @@ window.debounce = (function (func, wait, immediate) {
 
     timeout = setTimeout(later, wait);
     if (callNow) {
-      func.apply(context, args);
+      func.apply(this, args);
     }
   };
 });
