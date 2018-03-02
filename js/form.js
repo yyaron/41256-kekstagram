@@ -46,7 +46,7 @@
 
   var closeForm = function () {
     uploadOverlay.classList.add('hidden');
-    window.form.reset();
+    form.reset();
     uploadFile.value = '';
 
     //  удаляем обработчики по закрытию окна
@@ -344,9 +344,9 @@
   });
 
   //  отправляем данные формы через xhr
-  window.form.addEventListener('submit', function (evt) {
+  form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.upload(new FormData(window.form), closeForm, window.showAlertMessage);
+    window.backend.upload(new FormData(form), closeForm, window.showAlertMessage);
   });
 
   //  поле комментария
