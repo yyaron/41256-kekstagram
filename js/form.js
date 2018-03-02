@@ -7,22 +7,23 @@
   var SCALE_STEP = 25;
   var MIN_LEFT_POSITION = 0;
 
-  //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна
+  //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна, форма
   var uploadFile = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.upload-overlay');
   var uploadFormClose = document.querySelector('.upload-form-cancel');
+  var form = document.querySelector('#upload-select-image');
 
   //  функция закрытия окна превью по нажатии на Escape
   var onOverlayCloseEscPress = function (evt) {
     if (evt.keyCode === window.keys.ESC_KEYCODE) {
-      onUploadOverlayCloseClick();
+      closeForm();
     }
   };
 
   //  функция закрытия окна превью по нажатии на Enter
   var onOverlayCloseEnterPress = function (evt) {
     if (evt.keyCode === window.keys.ENTER_KEYCODE) {
-      onUploadOverlayCloseClick();
+      closeForm();
     }
   };
 
@@ -41,17 +42,17 @@
   //  закрытие окна превью
   var onUploadOverlayCloseClick = function () {
     closeForm();
+  };
+
+  var closeForm = function () {
+    uploadOverlay.classList.add('hidden');
+    window.form.reset();
     uploadFile.value = '';
 
     //  удаляем обработчики по закрытию окна
     uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
     document.removeEventListener('keydown', onOverlayCloseEscPress);
     uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
-  };
-
-  var closeForm = function () {
-    uploadOverlay.classList.add('hidden');
-    window.form.reset();
   };
 
   //  показываем окно превью по изменению значения
@@ -203,7 +204,7 @@
     //  переключает на оригинал
     onEffectNoneButtonClick: function () {
       hideUploadEffectControls();
-      filterFunctions.onAnyEffectClick('');
+      filterFunctions.onAnyEffectClick();
 
       currentAppliedFilterFunction = 'onEffectNoneButtonClick';
       imagePreview.style.filter = '';
@@ -212,7 +213,7 @@
     //  переключает на "хром"
     onEffectChromeButtonClick: function () {
       showUploadEffectControls();
-      filterFunctions.onAnyEffectClick('upload-effect-chrome');
+      filterFunctions.onAnyEffectClick('effect-chrome');
 
       currentAppliedFilterFunction = 'onEffectChromeButtonClick';
       imagePreview.style.filter = 'grayscale(' + effectLevel.value + ')';
@@ -221,7 +222,7 @@
     //  переключает на "сепию"
     onEffectSepiaButtonClick: function () {
       showUploadEffectControls();
-      filterFunctions.onAnyEffectClick('upload-effect-sepia');
+      filterFunctions.onAnyEffectClick('effect-sepia');
 
       currentAppliedFilterFunction = 'onEffectSepiaButtonClick';
       imagePreview.style.filter = 'sepia(' + effectLevel.value + ')';
@@ -230,7 +231,7 @@
     //  переключает на "марвин"
     onEffectMarvinButtonClick: function () {
       showUploadEffectControls();
-      filterFunctions.onAnyEffectClick('upload-effect-marvin');
+      filterFunctions.onAnyEffectClick('effect-marvin');
 
       currentAppliedFilterFunction = 'onEffectMarvinButtonClick';
       imagePreview.style.filter = 'invert(' + ((effectLevel.value * 10) + '%') + ')';
@@ -239,7 +240,7 @@
     //  переключает на "фобос"
     onEffectFobosButtonClick: function () {
       showUploadEffectControls();
-      filterFunctions.onAnyEffectClick('upload-effect-fobos');
+      filterFunctions.onAnyEffectClick('effect-fobos');
 
       currentAppliedFilterFunction = 'onEffectFobosButtonClick';
       imagePreview.style.filter = 'blur(' + ((effectLevel.value * 3) + 'px') + ')';
@@ -247,7 +248,7 @@
 
     //  переключает на "зной"
     onEffectHeatButtonClick: function () {
-      filterFunctions.onAnyEffectClick('upload-effect-heat');
+      filterFunctions.onAnyEffectClick('effect-heat');
 
       currentAppliedFilterFunction = 'onEffectHeatButtonClick';
       imagePreview.style.filter = 'brightness(' + (effectLevel.value * 3) + ')';
@@ -342,12 +343,10 @@
     }
   });
 
-  window.form = document.querySelector('#upload-select-image');
-
   //  отправляем данные формы через xhr
   window.form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.upload(new FormData(window.form), closeForm, window.showAlertMessage);
+    window.backend.upload(new FormData(window.form), closeForm, window.showAlertMessage);
   });
 
   //  поле комментария

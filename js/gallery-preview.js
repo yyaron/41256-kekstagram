@@ -29,6 +29,11 @@
     document.removeEventListener('keydown', onGalleryCloseEscPress);
   };
 
+  // делаем видимым окно галереи
+  var onGalleryOpenClick = function () {
+    gallery.classList.remove('hidden');
+  };
+
   //  показ окна галереи
   window.onAnyPictureClick = function (evt) {
     evt.preventDefault();
@@ -36,7 +41,7 @@
     var itemStats = clickedItem.nextElementSibling.children;
 
     //  делаем видимым окно галереи
-    gallery.classList.remove('hidden');
+    onGalleryOpenClick();
 
     //  заполняем окно данными с выбранной фотографии
     gallery.querySelector('.gallery-overlay-image').src = clickedItem.src;

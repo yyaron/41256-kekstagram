@@ -26,28 +26,29 @@
     xhr.timeout = 10000;
   };
 
-  //  загрузка данных с сервера
-  window.download = function (onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+  window.backend = {
+    //  отправка формы превью
+    upload: function (data, onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
 
-    onXhrLoad(xhr, onLoad, onError);
-    onXhrError(xhr, onError);
+      onXhrLoad(xhr, onLoad, onError);
+      onXhrError(xhr, onError);
 
-    xhr.open('GET', 'https://js.dump.academy/kekstagram/data');
-    xhr.send();
-  };
+      xhr.open('POST', 'https://js.dump.academy/kekstagram');
+      xhr.send(data);
+    },
+    //  загрузка данных с сервера
+    download: function (onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
 
-  //  отправка формы превью
-  window.upload = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+      onXhrLoad(xhr, onLoad, onError);
+      onXhrError(xhr, onError);
 
-    onXhrLoad(xhr, onLoad, onError);
-    onXhrError(xhr, onError);
-
-    xhr.open('POST', 'https://js.dump.academy/kekstagram');
-    xhr.send(data);
+      xhr.open('GET', 'https://js.dump.academy/kekstagram/data');
+      xhr.send();
+    }
   };
 
 })();

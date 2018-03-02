@@ -803,7 +803,7 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   font-size: 30px;
   color: black;
   font-weight: bold;
-  border: 10px solid black;
+  border: 10px solid red;
 }
 
 .footer {

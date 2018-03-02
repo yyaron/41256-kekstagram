@@ -4,6 +4,8 @@
 (function () {
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
+  //  хранит загруженные с сервера данные о картинках
+  var downloadedPictures;
 
   //  показываем фильтры
   var showFilters = function () {
@@ -19,10 +21,12 @@
     var pictureTemplate = document.querySelector('#picture-template').content;
     //  копируем всё содержимое шаблона в новый элемент
     var pictureElement = pictureTemplate.cloneNode(true);
+    var image = pictureElement.querySelector('img');
+
     //  вставляем cгенерированную картинку из массива
-    pictureElement.querySelector('img').src = picture.url;
+    image.src = picture.url;
     //  вешаем обработчик на каждую фотографию
-    pictureElement.querySelector('img').addEventListener('click', window.onAnyPictureClick);
+    image.addEventListener('click', window.onAnyPictureClick);
     //  вставляем рандомное число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
     //  вставляем рандомное число комментариев из массива
@@ -53,12 +57,12 @@
   };
 
   var onLoadPictures = function (pictures) {
-    window.downloadedPictures = pictures;
+    downloadedPictures = pictures;
     renderPicturesOnPage(pictures);
   };
 
   //  загружаем картинки
-  window.download(onLoadPictures, window.showAlertMessage);
+  window.backend.download(onLoadPictures, window.showAlertMessage);
 
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
@@ -66,7 +70,7 @@
   var loadRecommendedPictures = function () {
     uncheckOtherFilterInputs(recommendedFilter);
 
-    renderPicturesOnPage(window.downloadedPictures);
+    renderPicturesOnPage(downloadedPictures);
   };
 
   recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
@@ -77,7 +81,7 @@
   var loadPopularPictures = function () {
     uncheckOtherFilterInputs(popularFilter);
 
-    var popularPictures = window.downloadedPictures.slice(0);
+    var popularPictures = downloadedPictures.slice(0);
 
     //  сортируем массив с лайками по убыванию
     popularPictures.sort(function (first, second) {
@@ -102,7 +106,7 @@
   var loadDiscussedPictures = function () {
     uncheckOtherFilterInputs(discussedFilter);
 
-    var discussedPictures = window.downloadedPictures.slice(0);
+    var discussedPictures = downloadedPictures.slice(0);
 
     //  сортируем массив с комментами по убыванию
     discussedPictures.sort(function (first, second) {
@@ -126,7 +130,7 @@
 
   var loadRandomPictures = function () {
     uncheckOtherFilterInputs(randomFilter);
-    var randomPictures = window.downloadedPictures.slice(0);
+    var randomPictures = downloadedPictures.slice(0);
     //  перемешиваем данные массива в случайном порядке
     var shuffleArray = function (array) {
       var currentIndex = array.length;
