@@ -6,9 +6,11 @@
   var MAX_SCALE = 100;
   var SCALE_STEP = 25;
   var MIN_LEFT_POSITION = 0;
+  var SLIDER_WIDTH;
 
   //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна, форма
   var uploadFile = document.querySelector('#upload-file');
+  var uploadFileLabel = document.querySelector('.upload-control');
   var uploadOverlay = document.querySelector('.upload-overlay');
   var uploadFormClose = document.querySelector('.upload-form-cancel');
   var form = document.querySelector('#upload-select-image');
@@ -48,6 +50,7 @@
     uploadOverlay.classList.add('hidden');
     form.reset();
     uploadFile.value = '';
+    filterFunctions.onEffectNoneButtonClick();
 
     //  удаляем обработчики по закрытию окна
     uploadFormClose.removeEventListener('click', onUploadOverlayCloseClick);
@@ -55,8 +58,16 @@
     uploadFormClose.removeEventListener('keydown', onOverlayCloseEnterPress);
   };
 
+  //  показываем диалог загрузки файла по нажатию на Enter
+  uploadFileLabel.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+      uploadFile.click();
+    }
+  });
+
   //  показываем окно превью по изменению значения
   uploadFile.addEventListener('change', onUploadFileChange);
+  //uploadFile.addEventListener('change', window.previewFile);
 
   //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
   var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
@@ -99,19 +110,17 @@
   //  флаг
   var sliderPinIsDragged = false;
 
-
-  var sliderWidth;
   var startCoordsX;
   //  обработчик перетаскивания пина
   var onPinPositionSliderMousemove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
+    SLIDER_WIDTH = document.querySelector('.upload-effect-level-line').offsetWidth;
+    console.log(SLIDER_WIDTH);
 
     var shift = startCoordsX - moveEvt.clientX;
 
     startCoordsX = moveEvt.clientX;
-
 
     sliderPin.style.left = (sliderPin.offsetLeft - shift) + 'px';
 
@@ -119,8 +128,8 @@
     if (parseInt(sliderPin.style.left, 10) <= MIN_LEFT_POSITION) {
       sliderPin.style.left = 0 + 'px';
     }
-    if (parseInt(sliderPin.style.left, 10) >= sliderWidth) {
-      sliderPin.style.left = sliderWidth + 'px';
+    if (parseInt(sliderPin.style.left, 10) >= SLIDER_WIDTH) {
+      sliderPin.style.left = SLIDER_WIDTH + 'px';
     }
   };
 
@@ -136,11 +145,11 @@
     var windowWidth = window.innerWidth;
 
     //  определяем положение ползунка на слайдере
-    var pinPositionOnSlider = startCoordsX - ((windowWidth - sliderWidth) / 2);
+    var pinPositionOnSlider = startCoordsX - ((windowWidth - SLIDER_WIDTH) / 2);
 
     sliderPinIsDragged = true;
     //  определяем пропорцию эффекта относительно положения ползунка
-    effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
+    effectLevel.value = (pinPositionOnSlider / SLIDER_WIDTH).toFixed(2);
     filterFunctions[currentAppliedFilterFunction]();
   };
 
@@ -154,15 +163,6 @@
     //  обработчик отпускания пина
     document.addEventListener('mouseup', onPinPositionSliderMouseup);
   });
-
-  // проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
-  var updateEffectLevelValue = function () {
-    if (!sliderPinIsDragged) {
-      effectLevel.value = 1;
-      sliderPin.style.left = '455px';
-    }
-    sliderPinIsDragged = false;
-  };
 
   //  создаем коллекцию кнопок, которые переключают эффекты
   var uploadEffectPreviewButtons = document.querySelectorAll('.upload-effect-preview');
@@ -191,7 +191,12 @@
   var filterFunctions = {
     //  сбрасывает остальные классы
     onAnyEffectClick: function (cssClass) {
-      updateEffectLevelValue();
+      // проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
+      if (!sliderPinIsDragged) {
+        effectLevel.value = 1;
+        sliderPin.style.left = SLIDER_WIDTH + 'px';
+      }
+      sliderPinIsDragged = false;
 
       var clearLastCssClass = function () {
         imagePreview.classList.remove(currentAppliedCssClass);

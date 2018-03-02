@@ -22,14 +22,17 @@
     //  копируем всё содержимое шаблона в новый элемент
     var pictureElement = pictureTemplate.cloneNode(true);
     var image = pictureElement.querySelector('img');
+    var imageLink = pictureElement.querySelector('a');
 
     //  вставляем cгенерированную картинку из массива
     image.src = picture.url;
-    //  вешаем обработчик на каждую фотографию
+    //  вешаем обработчик клика на каждую фотографию
     image.addEventListener('click', window.onAnyPictureClick);
-    //  вставляем рандомное число лайков из массива
+    //  вешаем обработчик нажатия Enter на каждую фотографию (ссылку фотографии)
+    imageLink.addEventListener('keydown', window.onAnyPictureEnterPress);
+    //  вставляем число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
-    //  вставляем рандомное число комментариев из массива
+    //  вставляем число комментариев из массива
     pictureElement.querySelector('.picture-comments').textContent = picture.comments.length;
 
     return pictureElement;

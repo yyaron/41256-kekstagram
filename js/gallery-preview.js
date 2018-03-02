@@ -9,19 +9,23 @@
   //  закрытие окна галереи по нажатии на Enter
   var onGalleryCloseEnterPress = function (evt) {
     if (evt.keyCode === window.keys.ENTER_KEYCODE) {
-      onGalleryCloseClick();
+      closeGallery();
     }
   };
 
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
     if (evt.keyCode === window.keys.ESC_KEYCODE) {
-      onGalleryCloseClick();
+      closeGallery();
     }
   };
 
-  //  закрытие окна галереи и удаление ненужных обработчиков
   var onGalleryCloseClick = function () {
+    closeGallery();
+  };
+
+  //  закрытие окна галереи и удаление ненужных обработчиков
+  var closeGallery = function () {
     gallery.classList.add('hidden');
 
     galleryCloseIcon.removeEventListener('click', onGalleryCloseClick);
@@ -29,30 +33,43 @@
     document.removeEventListener('keydown', onGalleryCloseEscPress);
   };
 
-  // делаем видимым окно галереи
-  var onGalleryOpenClick = function () {
-    gallery.classList.remove('hidden');
-  };
+  var clickedItem;
 
   //  показ окна галереи
   window.onAnyPictureClick = function (evt) {
     evt.preventDefault();
-    var clickedItem = evt.target;
-    var itemStats = clickedItem.nextElementSibling.children;
+    clickedItem = evt.target;
 
     //  делаем видимым окно галереи
-    onGalleryOpenClick();
+    openGallery(clickedItem);
+  };
+
+  window.onAnyPictureEnterPress = function (evt) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+      evt.preventDefault();
+      clickedItem = evt.target.children[0];
+
+      //  делаем видимым окно галереи
+      openGallery(clickedItem);
+    }
+  };
+
+  // делаем видимым окно галереи
+  var openGallery = function (clickedItem) {
+    var itemStats = clickedItem.nextElementSibling.children;
 
     //  заполняем окно данными с выбранной фотографии
     gallery.querySelector('.gallery-overlay-image').src = clickedItem.src;
     gallery.querySelector('.likes-count').textContent = itemStats[0].textContent;
     gallery.querySelector('.comments-count').textContent = itemStats[1].textContent;
 
-    //  закрываем по клику на крестик
+    gallery.classList.remove('hidden');
+
+    //  обработчик закрытия по клику на крестик
     galleryCloseIcon.addEventListener('click', onGalleryCloseClick);
-    //  закрываем по клику на Enter, если крестик в фокусе
+    //  обработчик закрытия по клику на Enter, если крестик в фокусе
     galleryCloseIcon.addEventListener('keydown', onGalleryCloseEnterPress);
-    //  закрываем по клику на Escape
+    //  обработчик закрытия по клику на Escape
     document.addEventListener('keydown', onGalleryCloseEscPress);
   };
 
