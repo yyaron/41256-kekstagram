@@ -67,7 +67,7 @@
 
   //  показываем окно превью по изменению значения
   uploadFile.addEventListener('change', onUploadFileChange);
-  //uploadFile.addEventListener('change', window.previewFile);
+  //  uploadFile.addEventListener('change', window.previewFile);
 
   //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
   var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
@@ -116,7 +116,6 @@
     moveEvt.preventDefault();
 
     SLIDER_WIDTH = document.querySelector('.upload-effect-level-line').offsetWidth;
-    console.log(SLIDER_WIDTH);
 
     var shift = startCoordsX - moveEvt.clientX;
 

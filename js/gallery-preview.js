@@ -55,7 +55,7 @@
   };
 
   // делаем видимым окно галереи
-  var openGallery = function (clickedItem) {
+  var openGallery = function () {
     var itemStats = clickedItem.nextElementSibling.children;
 
     //  заполняем окно данными с выбранной фотографии
