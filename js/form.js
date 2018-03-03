@@ -31,7 +31,7 @@
 
   //  функция открытия окна превью
   var onUploadFileChange = function () {
-    window.previewFile()
+    window.previewFile();
     uploadOverlay.classList.remove('hidden');
 
     //  закрываем по клику

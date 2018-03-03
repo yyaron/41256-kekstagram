@@ -85,7 +85,7 @@
     if (evt.keyCode === window.keys.ENTER_KEYCODE) {
       evt.target.control.click();
     }
-  }
+  };
 
   //  обработчик по клику на фильтр
   recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
