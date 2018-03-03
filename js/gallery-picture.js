@@ -4,6 +4,13 @@
 (function () {
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
+  //  хранит загруженные с сервера данные о картинках
+  var downloadedPictures;
+  //  лейблы инпутов с фильтрами
+  var recommendedFilterLabel = document.querySelectorAll('.filters-item')[0];
+  var popularFilterLabel = document.querySelectorAll('.filters-item')[1];
+  var discussedFilterLabel = document.querySelectorAll('.filters-item')[2];
+  var randomFilterLabel = document.querySelectorAll('.filters-item')[3];
 
   //  показываем фильтры
   var showFilters = function () {
@@ -19,19 +26,24 @@
     var pictureTemplate = document.querySelector('#picture-template').content;
     //  копируем всё содержимое шаблона в новый элемент
     var pictureElement = pictureTemplate.cloneNode(true);
+    var image = pictureElement.querySelector('img');
+    var imageLink = pictureElement.querySelector('a');
+
     //  вставляем cгенерированную картинку из массива
-    pictureElement.querySelector('img').src = picture.url;
-    //  вешаем обработчик на каждую фотографию
-    pictureElement.querySelector('img').addEventListener('click', window.onAnyPictureClick);
-    //  вставляем рандомное число лайков из массива
+    image.src = picture.url;
+    //  вешаем обработчик клика на каждую фотографию
+    image.addEventListener('click', window.onAnyPictureClick);
+    //  вешаем обработчик нажатия Enter на каждую фотографию (ссылку фотографии)
+    imageLink.addEventListener('keydown', window.onAnyPictureEnterPress);
+    //  вставляем число лайков из массива
     pictureElement.querySelector('.picture-likes').textContent = picture.likes;
-    //  вставляем рандомное число комментариев из массива
+    //  вставляем число комментариев из массива
     pictureElement.querySelector('.picture-comments').textContent = picture.comments.length;
 
     return pictureElement;
   };
 
-  var renderPicturesOnPage = window.debounce(function (pictures) {
+  var renderPicturesOnPage = function (pictures) {
     //  создаем фрагмент
     var fragment = document.createDocumentFragment();
     //  и воспроизводим шаблоны с помощью фрагмента
@@ -42,32 +54,23 @@
     pictureList.appendChild(fragment);
 
     showFilters();
-  }, 500);
-
-  window.showAlertMessage = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-
-    setTimeout(function () {
-      node.parentNode.removeChild(node);
-    }, 3000);
   };
 
   var uncheckOtherFilterInputs = function (currentInput) {
-    document.querySelectorAll('input[name="filter"]').checked = false;
+    var filterInputs = document.querySelectorAll('input[name="filter"]');
+    for (var i = 0; i < filterInputs.length; i++) {
+      filterInputs[i].checked = false;
+    }
     currentInput.checked = true;
   };
 
-
   var onLoadPictures = function (pictures) {
-    window.downloadedPictures = pictures;
+    downloadedPictures = pictures;
     renderPicturesOnPage(pictures);
   };
 
   //  загружаем картинки
-  window.download(onLoadPictures, window.showAlertMessage);
+  window.backend.download(onLoadPictures, window.showAlertMessage);
 
   //  фотографии в том порядке, в котором они были загружены с сервера
   var recommendedFilter = document.querySelector('#filter-recommend');
@@ -75,10 +78,19 @@
   var loadRecommendedPictures = function () {
     uncheckOtherFilterInputs(recommendedFilter);
 
-    renderPicturesOnPage(window.downloadedPictures);
+    renderPicturesOnPage(downloadedPictures);
   };
 
-  recommendedFilter.addEventListener('click', loadRecommendedPictures);
+  var onAnyFilterEnterPress = function (evt) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+      evt.target.control.click();
+    }
+  };
+
+  //  обработчик по клику на фильтр
+  recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
+  //  обработчик по нажатию Enter
+  recommendedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
@@ -86,7 +98,7 @@
   var loadPopularPictures = function () {
     uncheckOtherFilterInputs(popularFilter);
 
-    var popularPictures = window.downloadedPictures.slice(0);
+    var popularPictures = downloadedPictures.slice(0);
 
     //  сортируем массив с лайками по убыванию
     popularPictures.sort(function (first, second) {
@@ -98,13 +110,15 @@
         return 0;
       }
     });
-
     //  передаем отсортированный массив
-    //  в функцию отрисовки сетки фотографий на странице
+    //  в функцию отрисовки фотографий на странице
     renderPicturesOnPage(popularPictures);
   };
 
-  popularFilter.addEventListener('click', loadPopularPictures);
+  //  обработчик по клику на фильтр
+  popularFilter.addEventListener('click', window.debounce(loadPopularPictures, 500));
+  //  обработчик по нажатию Enter
+  popularFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в порядке убывания количества комментариев
   var discussedFilter = document.querySelector('#filter-discussed');
@@ -112,7 +126,7 @@
   var loadDiscussedPictures = function () {
     uncheckOtherFilterInputs(discussedFilter);
 
-    var discussedPictures = window.downloadedPictures.slice(0);
+    var discussedPictures = downloadedPictures.slice(0);
 
     //  сортируем массив с комментами по убыванию
     discussedPictures.sort(function (first, second) {
@@ -124,21 +138,23 @@
         return 0;
       }
     });
-
     //  передаем отсортированный массив
-    //  в функцию отрисовки сетки фотографий на странице
+    //  в функцию отрисовки фотографий на странице
     renderPicturesOnPage(discussedPictures);
   };
 
-  discussedFilter.addEventListener('click', loadDiscussedPictures);
+  //  обработчик по клику на фильтр
+  discussedFilter.addEventListener('click', window.debounce(loadDiscussedPictures, 500));
+  //  обработчик по нажатию Enter
+  discussedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в случайном порядке
   var randomFilter = document.querySelector('#filter-random');
 
   var loadRandomPictures = function () {
     uncheckOtherFilterInputs(randomFilter);
-    var randomPictures = window.downloadedPictures.slice(0);
-
+    var randomPictures = downloadedPictures.slice(0);
+    //  перемешиваем данные массива в случайном порядке
     var shuffleArray = function (array) {
       var currentIndex = array.length;
       var temporaryValue = currentIndex;
@@ -153,12 +169,14 @@
       }
       return array;
     };
-
     //  передаем отсортированный массив
     //  в функцию отрисовки сетки фотографий на странице
     renderPicturesOnPage(shuffleArray(randomPictures));
   };
 
-  randomFilter.addEventListener('click', loadRandomPictures);
+  //  обработчик по клику на фильтр
+  randomFilter.addEventListener('click', window.debounce(loadRandomPictures, 500));
+  //  обработчик по нажатию Enter
+  randomFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
 })();
