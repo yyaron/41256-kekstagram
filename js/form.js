@@ -31,6 +31,7 @@
 
   //  функция открытия окна превью
   var onUploadFileChange = function () {
+    window.previewFile()
     uploadOverlay.classList.remove('hidden');
 
     //  закрываем по клику
@@ -67,7 +68,6 @@
 
   //  показываем окно превью по изменению значения
   uploadFile.addEventListener('change', onUploadFileChange);
-  //  uploadFile.addEventListener('change', window.previewFile);
 
   //  кнопка увеличения, кнопка уменьшения, индикатор масштаба, фото
   var increaseButton = document.querySelector('.upload-resize-controls-button-inc');
@@ -186,6 +186,12 @@
     uploadEffectControls.classList.remove('hidden');
   };
 
+  var clearLastCssClass = function (cssClass) {
+    imagePreview.classList.remove(currentAppliedCssClass);
+    currentAppliedCssClass = cssClass;
+    imagePreview.classList.add(currentAppliedCssClass);
+  };
+
   //  объект с фильтрами
   var filterFunctions = {
     //  сбрасывает остальные классы
@@ -197,11 +203,6 @@
       }
       sliderPinIsDragged = false;
 
-      var clearLastCssClass = function () {
-        imagePreview.classList.remove(currentAppliedCssClass);
-        currentAppliedCssClass = cssClass;
-        imagePreview.classList.add(currentAppliedCssClass);
-      };
       clearLastCssClass(cssClass);
     },
 
