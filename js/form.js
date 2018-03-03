@@ -253,6 +253,7 @@
 
     //  переключает на "зной"
     onEffectHeatButtonClick: function () {
+      showUploadEffectControls();
       filterFunctions.onAnyEffectClick('effect-heat');
 
       currentAppliedFilterFunction = 'onEffectHeatButtonClick';
