@@ -6,6 +6,11 @@
   var pictureList = document.querySelector('.pictures');
   //  хранит загруженные с сервера данные о картинках
   var downloadedPictures;
+  //  лейблы инпутов с фильтрами
+  var recommendedFilterLabel = document.querySelectorAll('.filters-item')[0];
+  var popularFilterLabel = document.querySelectorAll('.filters-item')[1];
+  var discussedFilterLabel = document.querySelectorAll('.filters-item')[2];
+  var randomFilterLabel = document.querySelectorAll('.filters-item')[3];
 
   //  показываем фильтры
   var showFilters = function () {
@@ -76,7 +81,16 @@
     renderPicturesOnPage(downloadedPictures);
   };
 
+  var onAnyFilterEnterPress = function (evt) {
+    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+      evt.target.control.click();
+    }
+  }
+
+  //  обработчик по клику на фильтр
   recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
+  //  обработчик по нажатию Enter
+  recommendedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в порядке убывания количества лайков
   var popularFilter = document.querySelector('#filter-popular');
@@ -101,7 +115,10 @@
     renderPicturesOnPage(popularPictures);
   };
 
+  //  обработчик по клику на фильтр
   popularFilter.addEventListener('click', window.debounce(loadPopularPictures, 500));
+  //  обработчик по нажатию Enter
+  popularFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в порядке убывания количества комментариев
   var discussedFilter = document.querySelector('#filter-discussed');
@@ -126,7 +143,10 @@
     renderPicturesOnPage(discussedPictures);
   };
 
+  //  обработчик по клику на фильтр
   discussedFilter.addEventListener('click', window.debounce(loadDiscussedPictures, 500));
+  //  обработчик по нажатию Enter
+  discussedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
   //  фотографии, отсортированные в случайном порядке
   var randomFilter = document.querySelector('#filter-random');
@@ -154,6 +174,9 @@
     renderPicturesOnPage(shuffleArray(randomPictures));
   };
 
+  //  обработчик по клику на фильтр
   randomFilter.addEventListener('click', window.debounce(loadRandomPictures, 500));
+  //  обработчик по нажатию Enter
+  randomFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
 })();

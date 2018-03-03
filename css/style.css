@@ -68,6 +68,10 @@ body {
   border-radius: 2px;
 }
 
+.filters-item {
+  outline-color: #ccc;
+}
+
 /* Форма */
 
 .upload-form {
@@ -236,6 +240,10 @@ body {
 
 .upload-form-cancel:active {
   transform: translateY(1px);
+}
+
+.upload-control {
+  outline-color: #ccc;
 }
 
 /* Кадрирование */
@@ -413,10 +421,15 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   color: #9a9a9a;
 
   border-radius: 5px;
+  outline: none;
 }
 
 .upload-form-hashtags:focus {
   color: #000000;
+}
+
+.upload-form-hashtags:invalid {
+  border: 1px solid red;
 }
 
 /* Описание */
@@ -431,6 +444,7 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   color: #9a9a9a;
 
   border-radius: 5px;
+  outline: none;
 }
 
 .upload-form-description:focus {
@@ -558,6 +572,7 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   margin-right: 11px;
   margin-bottom: 14px;
   overflow: hidden;
+  outline-color: #ccc;
 
   text-align: center;
 }
@@ -797,13 +812,13 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   padding: 25px;
   text-align: center;
   background-color: yellow;
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   font-size: 30px;
   color: black;
   font-weight: bold;
-  border: 5px solid red;
+  border: 10px solid black;
 }
 
 .footer {
