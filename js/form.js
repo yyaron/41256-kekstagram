@@ -20,7 +20,7 @@
 
   //  функция закрытия окна превью по нажатии на Escape
   var onOverlayCloseEscPress = function (evt) {
-    if (evt.keyCode === window.keys.ESC_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ESC_KEYCODE) {
       evt.stopPropagation();
       closeForm();
     }
@@ -28,14 +28,14 @@
 
   //  функция закрытия окна превью по нажатии на Enter
   var onOverlayCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
       closeForm();
     }
   };
 
   //  функция открытия окна превью
   var onUploadFileChange = function () {
-    window.previewFile();
+    window.helpers.previewFile();
     uploadOverlay.classList.remove('hidden');
 
     //  закрываем по клику
@@ -65,7 +65,7 @@
 
   //  показываем диалог загрузки файла по нажатию на Enter
   uploadFileLabel.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
       uploadFile.click();
     }
   });
@@ -286,9 +286,8 @@
       if (hashtag === '') {
         input.setCustomValidity('Хештеги разделены больше чем одним пробелом после ' + i + '-го хештега.');
         break;
-      } else {
-        input.setCustomValidity('');
       }
+      input.setCustomValidity('');
     }
   };
 
@@ -305,9 +304,8 @@
       if (hastagIndex !== i) {
         input.setCustomValidity('Хештеги ' + hashtags[hastagIndex] + ' и ' + hashtags[i] + ' повторяются.');
         break;
-      } else {
-        input.setCustomValidity('');
       }
+      input.setCustomValidity('');
     }
   };
 
@@ -352,16 +350,15 @@
       } else if (hashtags[i].indexOf(',') !== -1 || hashtags[i].indexOf(';') !== -1) {
         target.setCustomValidity('Хэштеги нужно отделять пробелами.');
         break;
-      } else {
-        target.setCustomValidity('');
       }
+      target.setCustomValidity('');
     }
   });
 
   //  отправляем данные формы через xhr
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.upload(new FormData(form), closeForm, window.showAlertMessage);
+    window.backend.upload(new FormData(form), closeForm, window.helpers.showAlertMessage);
   });
 
   //  поле комментария
