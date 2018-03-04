@@ -6,7 +6,10 @@
   var MAX_SCALE = 100;
   var SCALE_STEP = 25;
   var MIN_LEFT_POSITION = 0;
-  var SLIDER_WIDTH;
+
+  var MIN_HASHTAG_LENGTH = 3;
+  var MAX_HASHTAG_LENGTH = 20;
+  var MAX_HASHTAG_NUMBER = 5;
 
   //  поле загрузки фото, окно предпросмотра фото, кнопка закрытия окна, форма
   var uploadFile = document.querySelector('#upload-file');
@@ -17,21 +20,22 @@
 
   //  функция закрытия окна превью по нажатии на Escape
   var onOverlayCloseEscPress = function (evt) {
-    if (evt.keyCode === window.keys.ESC_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ESC_KEYCODE) {
+      evt.stopPropagation();
       closeForm();
     }
   };
 
   //  функция закрытия окна превью по нажатии на Enter
   var onOverlayCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
       closeForm();
     }
   };
 
   //  функция открытия окна превью
   var onUploadFileChange = function () {
-    window.previewFile();
+    window.helpers.previewFile();
     uploadOverlay.classList.remove('hidden');
 
     //  закрываем по клику
@@ -61,7 +65,7 @@
 
   //  показываем диалог загрузки файла по нажатию на Enter
   uploadFileLabel.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
       uploadFile.click();
     }
   });
@@ -111,11 +115,13 @@
   var sliderPinIsDragged = false;
 
   var startCoordsX;
+  var sliderWidth;
+
   //  обработчик перетаскивания пина
   var onPinPositionSliderMousemove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    SLIDER_WIDTH = document.querySelector('.upload-effect-level-line').offsetWidth;
+    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
 
     var shift = startCoordsX - moveEvt.clientX;
 
@@ -127,8 +133,8 @@
     if (parseInt(sliderPin.style.left, 10) <= MIN_LEFT_POSITION) {
       sliderPin.style.left = 0 + 'px';
     }
-    if (parseInt(sliderPin.style.left, 10) >= SLIDER_WIDTH) {
-      sliderPin.style.left = SLIDER_WIDTH + 'px';
+    if (parseInt(sliderPin.style.left, 10) >= sliderWidth) {
+      sliderPin.style.left = sliderWidth + 'px';
     }
   };
 
@@ -144,11 +150,14 @@
     var windowWidth = window.innerWidth;
 
     //  определяем положение ползунка на слайдере
-    var pinPositionOnSlider = startCoordsX - ((windowWidth - SLIDER_WIDTH) / 2);
+    var pinPositionOnSlider = startCoordsX - ((windowWidth - sliderWidth) / 2);
+    if (pinPositionOnSlider < 0) {
+      pinPositionOnSlider = 0;
+    }
 
     sliderPinIsDragged = true;
     //  определяем пропорцию эффекта относительно положения ползунка
-    effectLevel.value = (pinPositionOnSlider / SLIDER_WIDTH).toFixed(2);
+    effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
     filterFunctions[currentAppliedFilterFunction]();
   };
 
@@ -199,7 +208,7 @@
       // проверяет состояние ползунка и при необходимости сбрасывает значение фильтра
       if (!sliderPinIsDragged) {
         effectLevel.value = 1;
-        sliderPin.style.left = SLIDER_WIDTH + 'px';
+        sliderPin.style.left = sliderWidth + 'px';
       }
       sliderPinIsDragged = false;
 
@@ -277,9 +286,8 @@
       if (hashtag === '') {
         input.setCustomValidity('Хештеги разделены больше чем одним пробелом после ' + i + '-го хештега.');
         break;
-      } else {
-        input.setCustomValidity('');
       }
+      input.setCustomValidity('');
     }
   };
 
@@ -296,9 +304,8 @@
       if (hastagIndex !== i) {
         input.setCustomValidity('Хештеги ' + hashtags[hastagIndex] + ' и ' + hashtags[i] + ' повторяются.');
         break;
-      } else {
-        input.setCustomValidity('');
       }
+      input.setCustomValidity('');
     }
   };
 
@@ -324,17 +331,17 @@
     if (target.validationMessage !== '') {
       return;
     }
-    if (hashtags.length > 5) {
+    if (hashtags.length > MAX_HASHTAG_NUMBER) {
       target.setCustomValidity('Не больше 5 хэштегов.');
       return;
     }
 
     //  валидация хэштегов: мин. длина, макс. длина, знак решетки, пробелы
     for (var i = 0; i < hashtags.length; i++) {
-      if (hashtags[i].length < 3) {
+      if (hashtags[i].length < MIN_HASHTAG_LENGTH) {
         target.setCustomValidity('Минимальная длина хэштега - 3 знака. В строке не должно быть лишних пробелов.');
         break;
-      } else if (hashtags[i].length > 20) {
+      } else if (hashtags[i].length > MAX_HASHTAG_LENGTH) {
         target.setCustomValidity('Максимальная длина хэштега - 20 знаков.');
         break;
       } else if (!pattern.test(hashtags[i])) {
@@ -343,16 +350,15 @@
       } else if (hashtags[i].indexOf(',') !== -1 || hashtags[i].indexOf(';') !== -1) {
         target.setCustomValidity('Хэштеги нужно отделять пробелами.');
         break;
-      } else {
-        target.setCustomValidity('');
       }
+      target.setCustomValidity('');
     }
   });
 
   //  отправляем данные формы через xhr
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.upload(new FormData(form), closeForm, window.showAlertMessage);
+    window.backend.upload(new FormData(form), closeForm, window.helpers.showAlertMessage);
   });
 
   //  поле комментария

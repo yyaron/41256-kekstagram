@@ -8,14 +8,15 @@
 
   //  закрытие окна галереи по нажатии на Enter
   var onGalleryCloseEnterPress = function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
       closeGallery();
     }
   };
 
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
-    if (evt.keyCode === window.keys.ESC_KEYCODE) {
+    if (evt.keyCode === window.helpers.keys.ESC_KEYCODE) {
+      evt.stopPropagation();
       closeGallery();
     }
   };
@@ -35,25 +36,6 @@
 
   var clickedItem;
 
-  //  показ окна галереи
-  window.onAnyPictureClick = function (evt) {
-    evt.preventDefault();
-    clickedItem = evt.target;
-
-    //  делаем видимым окно галереи
-    openGallery(clickedItem);
-  };
-
-  window.onAnyPictureEnterPress = function (evt) {
-    if (evt.keyCode === window.keys.ENTER_KEYCODE) {
-      evt.preventDefault();
-      clickedItem = evt.target.children[0];
-
-      //  делаем видимым окно галереи
-      openGallery(clickedItem);
-    }
-  };
-
   // делаем видимым окно галереи
   var openGallery = function () {
     var itemStats = clickedItem.nextElementSibling.children;
@@ -71,6 +53,27 @@
     galleryCloseIcon.addEventListener('keydown', onGalleryCloseEnterPress);
     //  обработчик закрытия по клику на Escape
     document.addEventListener('keydown', onGalleryCloseEscPress);
+  };
+
+  window.galleryPreview = {
+    //  показ окна галереи
+    onAnyPictureClick: function (evt) {
+      evt.preventDefault();
+      clickedItem = evt.target;
+
+      //  делаем видимым окно галереи
+      openGallery(clickedItem);
+    },
+
+    onAnyPictureEnterPress: function (evt) {
+      if (evt.keyCode === window.helpers.keys.ENTER_KEYCODE) {
+        evt.preventDefault();
+        clickedItem = evt.target.children[0];
+
+        //  делаем видимым окно галереи
+        openGallery(clickedItem);
+      }
+    }
   };
 
 })();
