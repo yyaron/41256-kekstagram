@@ -121,7 +121,7 @@
   var onPinPositionSliderMousemove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;;
+    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
 
     var shift = startCoordsX - moveEvt.clientX;
 
