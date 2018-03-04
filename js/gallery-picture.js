@@ -2,6 +2,8 @@
 //  picture.js --- модуль для отрисовки миниатюры
 
 (function () {
+  var DEBOUNCE_TIME = 500;
+
   //  сохраняем в переменную контейнер, куда будем записывать сгенерированные шаблоны
   var pictureList = document.querySelector('.pictures');
   //  хранит загруженные с сервера данные о картинках
@@ -88,7 +90,7 @@
   };
 
   //  обработчик по клику на фильтр
-  recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, 500));
+  recommendedFilter.addEventListener('click', window.debounce(loadRecommendedPictures, DEBOUNCE_TIME));
   //  обработчик по нажатию Enter
   recommendedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
@@ -116,7 +118,7 @@
   };
 
   //  обработчик по клику на фильтр
-  popularFilter.addEventListener('click', window.debounce(loadPopularPictures, 500));
+  popularFilter.addEventListener('click', window.debounce(loadPopularPictures, DEBOUNCE_TIME));
   //  обработчик по нажатию Enter
   popularFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
@@ -144,7 +146,7 @@
   };
 
   //  обработчик по клику на фильтр
-  discussedFilter.addEventListener('click', window.debounce(loadDiscussedPictures, 500));
+  discussedFilter.addEventListener('click', window.debounce(loadDiscussedPictures, DEBOUNCE_TIME));
   //  обработчик по нажатию Enter
   discussedFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 
@@ -175,7 +177,7 @@
   };
 
   //  обработчик по клику на фильтр
-  randomFilter.addEventListener('click', window.debounce(loadRandomPictures, 500));
+  randomFilter.addEventListener('click', window.debounce(loadRandomPictures, DEBOUNCE_TIME));
   //  обработчик по нажатию Enter
   randomFilterLabel.addEventListener('keydown', onAnyFilterEnterPress);
 

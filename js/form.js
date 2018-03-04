@@ -121,8 +121,7 @@
   var onPinPositionSliderMousemove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;
-    console.log(sliderWidth);
+    sliderWidth = document.querySelector('.upload-effect-level-line').offsetWidth;;
 
     var shift = startCoordsX - moveEvt.clientX;
 
@@ -159,7 +158,6 @@
     sliderPinIsDragged = true;
     //  определяем пропорцию эффекта относительно положения ползунка
     effectLevel.value = (pinPositionOnSlider / sliderWidth).toFixed(2);
-    console.log(effectLevel.value)
     filterFunctions[currentAppliedFilterFunction]();
   };
 

@@ -8,7 +8,7 @@
     ENTER_KEYCODE: 13
   };
 
-  ERROR_SHOW_TIME = 3000;
+  var ERROR_SHOW_TIME = 3000;
 
   //  алёрт при ошибке отправки или загрузки данных
   window.showAlertMessage = function (errorMessage) {
