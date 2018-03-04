@@ -16,6 +16,7 @@
   //  закрытие окна галереи по нажатии на Escape
   var onGalleryCloseEscPress = function (evt) {
     if (evt.keyCode === window.keys.ESC_KEYCODE) {
+      evt.stopPropagation();
       closeGallery();
     }
   };

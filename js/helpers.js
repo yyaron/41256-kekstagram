@@ -8,6 +8,8 @@
     ENTER_KEYCODE: 13
   };
 
+  ERROR_SHOW_TIME = 3000;
+
   //  алёрт при ошибке отправки или загрузки данных
   window.showAlertMessage = function (errorMessage) {
     var node = document.createElement('div');
@@ -17,7 +19,7 @@
 
     setTimeout(function () {
       node.parentNode.removeChild(node);
-    }, 3000);
+    }, ERROR_SHOW_TIME);
   };
 
   //  дебаунсер, устраняет дребез при переключении фильтров
